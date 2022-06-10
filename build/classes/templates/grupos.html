@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header('Grupos de investigación')">
+<meta charset="utf-8" />
+</head>
+<body id="page-top" class="sidebar-toggled">
+
+	<nav th:replace="fragments/nav :: nav('card-0-nav')"></nav>
+	<nav th:replace="fragments/secondarynav"></nav>
+	<div id="wrapper">
+
+		<div id="content-wrapper">
+			<div class="container-fluid">
+				<div class="region-hero">
+					<div class="contenedor-hero">
+						<div class="contenido-hero">
+							<h1 class="titulo-hero">Grupos de Investigación</h1>
+							Tabla/Reporte de los Grupos de Investigación Activos en el
+							Sistema.
+						</div>
+					</div>
+				</div>
+				<div class="separador-1"></div>
+
+				<!-- PRUEBA  -->
+				<!-- -->
+				<div class="contenedor mb-3">
+					<div class="contenedor-header">
+						<i class="fas fa-chart-bar"></i> Reporte gráfico por categoría
+					</div>
+					<div id="barras-categoria" class="contenedor-body"
+						style="width: 200; height: 150"></div>
+				</div>
+
+
+				<!-- PRUEBA -->
+			
+				<div id="table">
+					<table id="tabla_grupos"
+						class="table table-striped table-bordered table-hover table-responsive-lg"
+						style="width: 100%">
+						<thead>
+							<tr>
+								<th></th>
+								<th>CÓDIGO COLCIENCIAS</th>
+								<th>NOMBRE</th>
+								<th>FACULTAD</th>
+								<th>PROGRAMA</th>
+								<th>CENTRO</th>
+								<th>LÍDER</th>
+								<th>CATEGORÍA</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="grupo : ${listaGrupos}">
+								<td th:text="${grupo.id}"></td>
+								<td th:with="cod=${#strings.substringAfter(grupo.contacto,':')}">
+									<div th:text="${#strings.substringBefore(cod,'Lí')}"></div>
+								</td>
+								<td th:text="${grupo.nombre}"></td>
+								<td th:text="${grupo.programas.get(0).facultad.nombre}"></td>
+								<td th:text="${grupo.programas.get(0).nombre}"></td>
+								<td th:text="${grupo.centro.nombre}"></td>
+								<td th:text="${grupo.lider}"></td>
+								<td th:switch="${grupo.categoria}"><span th:case="'N/D'">NO
+										RECONOCIDO</span> <span th:case="'SIN CATEGORÍA'">RECONOCIDO</span>
+									<div th:case="*">
+										<div th:text="${grupo.categoria}"></div>
+									</div></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="fragments/footer"></div>
+
+	<!-- PRUEBA -->
+
+	<script th:inline="javascript">
+		$(document)
+				.ready(
+						function() {
+							
+							var categorias = [[${dataCategoriaGrupos}]];
+					        var clavesCategoria = [[${clavesCategoriaGrupos}]];
+							const color = "#308113";
+							
+							var chart = {
+								type : 'column'
+							};
+							var title = {
+								text : 'Grupos de Investigación por Categoría'
+							};
+							var subtitle = {
+								text : ''
+							};
+							var xAxis = {
+								type: 'category',
+								labels: {
+									style: {
+										fontSize: '13px',
+										fontFamily: 'Helvetica Neue, sans-serif'
+									}
+								},
+								categories : clavesCategoria,
+								title : {
+									text : 'Categoría'
+								}
+							};
+							var yAxis = {
+								min : 0,
+								title : {
+									text : 'Cantidad de Grupos'
+								}
+							};
+							var legend =  {
+									enabled: false
+							};
+							var tooltip = {
+								pointFormat : 'Cantidad: <b>{point.y:.0f}</b>'
+							};
+							var plotOptions = {
+								column: {
+									allowPointSelect: true,
+									cursor: 'pointer',
+									dataLabels: {
+										enabled: true,
+										format: '<b>{point.y:.0f}</b>'
+									}
+								}
+							};
+							var credits = {
+								enabled : false
+							};
+
+							var series = [{
+										data : categorias,
+										color: color
+									}];
+
+							var json = {};
+							json.chart = chart;
+							json.title = title;
+							json.subtitle = subtitle;
+							json.tooltip = tooltip;
+							json.xAxis = xAxis;
+							json.yAxis = yAxis;
+							json.series = series;
+							json.plotOptions = plotOptions;
+							json.credits = credits;
+							json.legend = legend;
+							$('#barras-categoria').highcharts(json);
+
+						});
+	</script>
+	<!-- PRUEBA -->
+
+</body>
+</html>
