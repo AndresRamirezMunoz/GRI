@@ -1,1 +1,7 @@
 target/classes
+target/gri-0.0.1-SNAPSHOT.war
+target/gri-0.0.1-SNAPSHOT.war.original
+target/gri-0.0.1-SNAPSHOT/
+target/maven-archiver/
+target/maven-status/
+target/m2e-wtp/web-resources/META-INF/maven/gri/gri/pom.properties

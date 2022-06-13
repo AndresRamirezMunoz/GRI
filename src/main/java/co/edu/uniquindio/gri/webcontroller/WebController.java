@@ -644,7 +644,7 @@ public class WebController {
 				model.addAttribute("listaProgramas", programaDAO.getProgramasDoctoradoFacultad(Long.parseLong(id)));
 				break;
 			case "pm":
-				model.addAttribute("listaProgramas", programaDAO.getProgramasMaestríaFacultad(Long.parseLong(id)));
+				model.addAttribute("listaProgramas", programaDAO.getProgramasMaestriaFacultad(Long.parseLong(id)));
 				break;
 			case "pe":
 				model.addAttribute("listaProgramas",
@@ -696,6 +696,82 @@ public class WebController {
 		}
 		return "centros";
 	}
+	
+	@GetMapping("/Admgrupos")
+	public String getAllGrupos(Model model) {
+		// model.addAttribute("titulo", "Grupos");
+		model.addAttribute("id", 0);
+
+		List<Centro> programa = new ArrayList<>();
+		List<Centro> centro = new ArrayList<>();
+		model.addAttribute("centro", centro);
+		model.addAttribute("centros", centroDAO.getAll());
+
+		model.addAttribute("programa", programa);
+		model.addAttribute("programas", programaDAO.getAll());
+		
+		model.addAttribute("listaGrupos", grupoDAO.findAll());
+
+		return "admin/grupos/grupos";
+	}
+	
+	@PostMapping("grupos/save/{idCentro}/{idPrograma}")
+	public @ResponseBody Respuesta saveGrupo(Grupo grupo, @PathVariable("idCentro") Long idCentro,
+			@PathVariable("idPrograma") Long idPrograma) {
+
+		System.out.println(grupo);
+		Respuesta respuesta = new Respuesta();
+
+		if (grupo != null) {
+
+			Grupo consulta = grupoDAO.findOne(grupo.getId());
+			Centro centroAsociada = centroDAO.findOne(idCentro);
+			List<Programa> programaAsociado = new ArrayList<Programa>();
+			programaAsociado.add(programaDAO.findOne(idPrograma));
+
+			Grupo peticion = new Grupo();
+			peticion.setId(grupo.getId());
+			peticion.setNombre(grupo.getNombre());
+			peticion.setLider(grupo.getLider());
+			peticion.setCategoria(grupo.getCategoria());
+			peticion.setContacto(grupo.getContacto());
+			peticion.setAreaConocimiento(grupo.getAreaConocimiento());
+			peticion.setInformacionGeneral(grupo.getInformacionGeneral());
+			peticion.setCentro(centroAsociada);
+			peticion.setProgramas(programaAsociado);
+			peticion.setActivo(true);
+
+			if (consulta == null) {
+
+				// guardar
+				Util util = new Util();
+				peticion.setAnioFundacion(util.obtenerFechaSistma());
+				grupoDAO.save(peticion);
+				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
+				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_CREAR_CENTRO_CORRECTO);
+			} else {
+
+				// actualizar
+				peticion.setAnioFundacion(grupo.getAnioFundacion());
+				grupoDAO.save(peticion);
+				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
+				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_MODIFICAR_CENTRO_CORRECTO);
+			}
+		}	
+		return respuesta;
+	}
+	
+	@GetMapping("grupos/active/{id}")
+	public String activeGrupo(@PathVariable("id") Long id) {
+
+		
+		Grupo grupo = grupoDAO.findOne(id);
+		grupo.setActivo(!grupo.isActivo());
+		grupoDAO.save(grupo);
+
+		return "redirect:/Admgrupos";
+	}
+
 
 	@GetMapping("/grupos")
 	public String getGrupos(
@@ -973,7 +1049,7 @@ public class WebController {
 		case Util.UNIVERSITY_PARAM_ID:
 			List<Facultad> facultades = facultadDAO.getAllFacultades();
 
-			model.addAttribute("nombre", "Tipología De Productos Para La Universidad Del Quindío");
+			model.addAttribute("nombre", "TipologÃ­a De Productos Para La Universidad Del QuindÃ­o");
 			model.addAttribute("lista", facultades);
 			model.addAttribute("subtipo", Util.FACULTY_PARAM_ID);
 			model.addAttribute("color", "card-0");
@@ -984,7 +1060,7 @@ public class WebController {
 			Facultad f = facultadDAO.getFacultadById(Long.parseLong(id));
 			List<Programa> programas = programaDAO.getProgramasFacultad(Long.parseLong(id));
 
-			model.addAttribute("nombre", "Tipología de Productos Para la Facultad de " + f.getNombre());
+			model.addAttribute("nombre", "TipologÃ­a de Productos Para la Facultad de " + f.getNombre());
 			model.addAttribute("lista", programas);
 			model.addAttribute("subtipo", "p");
 			model.addAttribute("color", "card-" + f.getId());
@@ -1026,7 +1102,7 @@ public class WebController {
 			Investigador i = investigadorDAO.findOne(Long.parseLong(id));
 
 			model.addAttribute("nombre",
-					"Tipología de Productos de " + utilidades.convertToTitleCaseIteratingChars(i.getNombre()));
+					"TipologÃ­a de Productos de " + utilidades.convertToTitleCaseIteratingChars(i.getNombre()));
 			model.addAttribute("color", "card-0");
 			break;
 		}
@@ -1169,6 +1245,7 @@ public class WebController {
 					peticion.setUsername(user.getUsername());
 					peticion.setPassword(utilidades.encodePassword(user.getPassword()));
 					peticion.setId(ultimo.getId() + 1);
+					peticion.setActivo(true);
 
 					userDAO.save(peticion);
 					respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
@@ -1204,6 +1281,17 @@ public class WebController {
 
 		return respuesta;
 	}
+	
+	@GetMapping("usuario/active/{username}")
+	public String activepFacultad(@PathVariable("username") String username) {
+
+		User usuario = userDAO.findOne(username);
+		usuario.setActivo(!usuario.isActivo());
+		userDAO.save(usuario);
+
+		return "redirect:/usuarios";
+	}
+	
 
 	@GetMapping("usuarios/delete/{id}")
 	public String deleteUsuario(@PathVariable("id") Long id, Model model) {
@@ -1249,6 +1337,7 @@ public class WebController {
 				peticion.setContacto(centro.getContacto());
 				peticion.setFacultad(facultadAsociada);
 				peticion.setId(ultimo.getId() + 1);
+				peticion.setActivo(true);
 
 				centroDAO.save(peticion);
 				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
@@ -1272,6 +1361,15 @@ public class WebController {
 		}
 
 		return respuesta;
+	}
+	@GetMapping("centro/active/{id}")
+	public String activeCentro(@PathVariable("id") Long id) {
+
+		Centro centro = centroDAO.findOne(id);
+		centro.setActivo(!centro.isActivo());
+		centroDAO.save(centro);
+
+		return "redirect:/Admcentros";
 	}
 	
 	@GetMapping("centros/delete/{id}")
@@ -1315,6 +1413,7 @@ public class WebController {
 				peticion.setMision(facultad.getMision());
 				peticion.setVision(facultad.getVision());
 				peticion.setContacto(facultad.getContacto());
+				peticion.setActivo(true);
 				peticion.setId(ultimo.getId() + 1);
 
 				facultadDAO.save(peticion);
@@ -1336,6 +1435,16 @@ public class WebController {
 		}
 
 		return respuesta;
+	}
+	
+	@GetMapping("facultad/active/{id}")
+	public String activeFacultad(@PathVariable("id") Long id) {
+
+		Facultad facultad = facultadDAO.findOne(id);
+		facultad.setActivo(!facultad.isActivo());
+		facultadDAO.save(facultad);
+
+		return "redirect:/Admfacultades";
 	}
 	
 	@GetMapping("facultades/delete/{id}")
@@ -1385,6 +1494,7 @@ public class WebController {
 				peticion.setVision(programa.getVision());
 				peticion.setContacto(programa.getContacto());
 				peticion.setFacultad(facultadAsociada);
+				peticion.setActivo(true);
 				peticion.setId(ultimo.getId() + 1);
 
 				programaDAO.save(peticion);
@@ -1411,6 +1521,16 @@ public class WebController {
 		}
 
 		return respuesta;
+	}
+	
+	@GetMapping("programa/active/{id}")
+	public String activePrograma(@PathVariable("id") Long id) {
+
+		Programa programa = programaDAO.findOne(id);
+		programa.setActivo(!programa.isActivo());
+		programaDAO.save(programa);
+
+		return "redirect:/Admprograma";
 	}
 	
 	@GetMapping("programas/delete/{id}")
@@ -1458,7 +1578,7 @@ public class WebController {
 			throws IOException, JRException {
 
 		response.setContentType("application/pdf");
-		response.setHeader("Content-disposition", "inline; filename=reporte de investigación.pdf");
+		response.setHeader("Content-disposition", "inline; filename=reporte de investigaciÃ³n.pdf");
 
 		final OutputStream outStream = response.getOutputStream();
 
@@ -1514,7 +1634,7 @@ public class WebController {
 			throws IOException, JRException {
 		response.setContentType("application/download");
 
-		response.setHeader("Content-disposition", "inline; filename=reporte de investigación.pdf");
+		response.setHeader("Content-disposition", "inline; filename=reporte de investigaciÃ³n.pdf");
 
 		final OutputStream outStream = response.getOutputStream();
 
@@ -1538,10 +1658,10 @@ public class WebController {
 	 * Permite generar un listado de archivos .jasper, que seran exportados en un
 	 * formato posteriormente, como pdf.
 	 *
-	 * @param jasperPrintList lista de archivos .jasper que será generada
+	 * @param jasperPrintList lista de archivos .jasper que serÃ¡ generada
 	 * @param type            el tipo
 	 * @param id              el id
-	 * @param conexion        la conexión
+	 * @param conexion        la conexiÃ³n
 	 */
 	private void configurarReportes(List<JasperPrint> jasperPrintList, String type, String id, Connection conexion)
 			throws JRException {
@@ -1709,9 +1829,9 @@ public class WebController {
 			grupo = true;
 			title_grupo = g.getNombre();
 
-			if (g.getInformaciongeneral() != null) {
+			if (g.getInformacionGeneral() != null) {
 
-				info_general = g.getInformaciongeneral().replaceAll("\n", " ");
+				info_general = g.getInformacionGeneral().replaceAll("\n", " ");
 
 			}
 
@@ -1958,7 +2078,7 @@ public class WebController {
 		case Util.FACULTY_PARAM_ID:
 			Facultad f = facultadDAO.getFacultadById(Long.parseLong(id));
 
-			datos[0] = "Estadísticas Generales de la Facultad de " + f.getNombre();
+			datos[0] = "EstadÃ­sticas Generales de la Facultad de " + f.getNombre();
 			datos[1] = "card-" + f.getId();
 			datos[2] = "btn-title-grid-" + f.getId();
 			datos[3] = "btn-total-grid-" + f.getId();
@@ -1996,7 +2116,7 @@ public class WebController {
 			datos[1] = "card-" + g.getProgramas().get(0).getFacultad().getId();
 			datos[2] = "btn-title-grid-" + g.getProgramas().get(0).getFacultad().getId();
 			datos[3] = "btn-total-grid-" + g.getProgramas().get(0).getFacultad().getId();
-			datos[4] = g.getInformaciongeneral();
+			datos[4] = g.getInformacionGeneral();
 			datos[5] = g.getContacto();
 
 			break;
@@ -2079,7 +2199,7 @@ public class WebController {
 		model.addAttribute("cantidadProduccionesProyectos",
 				produccionDAO.getCantidadProduccionesFacultadPorSubTipo(id, "33"));
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// basicas-----------------------------------------------------------------------
 		model.addAttribute("cantidadProgramasAcademicos", resumen.get(0));
 		model.addAttribute("cantidadProgramasDoctorado", resumen.get(1));
@@ -2209,7 +2329,7 @@ public class WebController {
 		model.addAttribute("cantidadProduccionesProyectos",
 				produccionDAO.getCantidadProduccionesProgramaPorSubTipo(id, "33"));
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// basicas-----------------------------------------------------------------------
 		model.addAttribute("cantidadGruposInvestigacion", resumen.get(0));
 		model.addAttribute("cantidadLineasInvestigacion", resumen.get(1));
@@ -2323,7 +2443,7 @@ public class WebController {
 		model.addAttribute("cantidadProduccionesProyectos",
 				produccionDAO.getCantidadProduccionesCentroPorSubTipo(id, "33"));
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// basicas-----------------------------------------------------------------------
 		model.addAttribute("cantidadGruposInvestigacion", resumen.get(0));
 		model.addAttribute("cantidadLineasInvestigacion", resumen.get(1));
@@ -2437,7 +2557,7 @@ public class WebController {
 		model.addAttribute("cantidadProduccionesProyectos",
 				produccionDAO.getCantidadProduccionesGrupoPorSubTipo(id, "33"));
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// basicas-----------------------------------------------------------------------
 		model.addAttribute("cantidadLineasInvestigacion", resumen.get(0));
 		model.addAttribute("cantidadInvestigadores", resumen.get(1));
@@ -2561,11 +2681,11 @@ public class WebController {
 		List<BigInteger> resumenAgroindustria = facultadDAO.getResumenGeneral(new Long("6"));
 		List<BigInteger> resumenCienciasEconomicas = facultadDAO.getResumenGeneral(new Long("7"));
 
-		// Este número es usado para indicar la cantidad de investigadores total debido
-		// a que con una suma aritmetica normal repetiría los investigadores
+		// Este nÃºmero es usado para indicar la cantidad de investigadores total debido
+		// a que con una suma aritmetica normal repetirÃ­a los investigadores
 		BigInteger cantidadTotalInvestigadores = facultadDAO.getStats().get(4);
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// ingenieria-----------------------------------------------------------------------
 
 		model.addAttribute("cantidadProgramasAcademicosIngenieria", resumenIngenieria.get(0));
@@ -2592,7 +2712,7 @@ public class WebController {
 		model.addAttribute("cantidadDocentesEspecialistasIngenieria", resumenIngenieria.get(21));
 		model.addAttribute("cantidadDocentesPregradoIngenieria", resumenIngenieria.get(22));
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// basicas-----------------------------------------------------------------------
 		model.addAttribute("cantidadProgramasAcademicosCienciasBasicas", resumenCienciasBasicas.get(0));
 		model.addAttribute("cantidadProgramasDoctoradoCienciasBasicas", resumenCienciasBasicas.get(1));
@@ -2618,7 +2738,7 @@ public class WebController {
 		model.addAttribute("cantidadDocentesEspecialistasCienciasBasicas", resumenCienciasBasicas.get(21));
 		model.addAttribute("cantidadDocentesPregradoCienciasBasicas", resumenCienciasBasicas.get(22));
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// educacion-----------------------------------------------------------------------
 		model.addAttribute("cantidadProgramasAcademicosEducacion", resumenEducacion.get(0));
 		model.addAttribute("cantidadProgramasDoctoradoEducacion", resumenEducacion.get(1));
@@ -2644,7 +2764,7 @@ public class WebController {
 		model.addAttribute("cantidadDocentesEspecialistasEducacion", resumenEducacion.get(21));
 		model.addAttribute("cantidadDocentesPregradoEducacion", resumenEducacion.get(22));
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// salud-----------------------------------------------------------------------
 		model.addAttribute("cantidadProgramasAcademicosCienciasDeLaSalud", resumenCienciasDeLaSalud.get(0));
 		model.addAttribute("cantidadProgramasDoctoradoCienciasDeLaSalud", resumenCienciasDeLaSalud.get(1));
@@ -2671,7 +2791,7 @@ public class WebController {
 		model.addAttribute("cantidadDocentesEspecialistasCienciasDeLaSalud", resumenCienciasDeLaSalud.get(21));
 		model.addAttribute("cantidadDocentesPregradoCienciasDeLaSalud", resumenCienciasDeLaSalud.get(22));
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// humanas-----------------------------------------------------------------------
 		model.addAttribute("cantidadProgramasAcademicosCienciasHumanas", resumenCienciasHumanas.get(0));
 		model.addAttribute("cantidadProgramasDoctoradoCienciasHumanas", resumenCienciasHumanas.get(1));
@@ -2697,7 +2817,7 @@ public class WebController {
 		model.addAttribute("cantidadDocentesEspecialistasCienciasHumanas", resumenCienciasHumanas.get(21));
 		model.addAttribute("cantidadDocentesPregradoCienciasHumanas", resumenCienciasHumanas.get(22));
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// agroindustria-----------------------------------------------------------------------
 		model.addAttribute("cantidadProgramasAcademicosAgroindustria", resumenAgroindustria.get(0));
 		model.addAttribute("cantidadProgramasDoctoradoAgroindustria", resumenAgroindustria.get(1));
@@ -2723,7 +2843,7 @@ public class WebController {
 		model.addAttribute("cantidadDocentesEspecialistasAgroindustria", resumenAgroindustria.get(21));
 		model.addAttribute("cantidadDocentesPregradoAgroindustria", resumenAgroindustria.get(22));
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// economicas-----------------------------------------------------------------------
 		model.addAttribute("cantidadProgramasAcademicosCienciasEconomicas", resumenCienciasEconomicas.get(0));
 		model.addAttribute("cantidadProgramasDoctoradoCienciasEconomicas", resumenCienciasEconomicas.get(1));
@@ -2751,7 +2871,7 @@ public class WebController {
 		model.addAttribute("cantidadDocentesEspecialistasCienciasEconomicas", resumenCienciasEconomicas.get(21));
 		model.addAttribute("cantidadDocentesPregradoCienciasEconomicas", resumenCienciasEconomicas.get(22));
 
-		// ------Adición de atributos al modelo con informacion de
+		// ------AdiciÃ³n de atributos al modelo con informacion de
 		// totales-----------------------------------------------------------------------
 		model.addAttribute("cantidadProgramasAcademicosTotal", resumenIngenieria.get(0)
 				.add(resumenCienciasBasicas.get(0)
@@ -3269,7 +3389,7 @@ public class WebController {
 		model.addAttribute("peEi", "ei");
 		model.addAttribute("peInd", "ind");
 
-		// ------Adición de atributos al modelo para referenciar a páginas
+		// ------AdiciÃ³n de atributos al modelo para referenciar a pÃ¡ginas
 		// especificas-----------------------------------------------------------------------
 
 		model.addAttribute("programaAcademico", Util.UNDERGRADUATE_PROGRAM_PARAM_ID);

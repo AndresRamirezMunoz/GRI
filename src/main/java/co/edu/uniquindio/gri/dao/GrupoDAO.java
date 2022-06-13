@@ -4,20 +4,27 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
+import co.edu.uniquindio.gri.CrudRepository.GrupoCrudRepository;
 import co.edu.uniquindio.gri.model.Grupo;
 import co.edu.uniquindio.gri.repository.GrupoRepository;
+import co.edu.uniquindio.gri.service.api.GrupoServiceApi;
+import co.edu.uniquindio.gri.utilities.GenericServiceImpl;
 
 /**
  * Clase GrupoDAO.
  */
 @Service
-public class GrupoDAO {
+public class GrupoDAO extends GenericServiceImpl<Grupo, Long> implements GrupoServiceApi{
 
 	/** Repository para grupos. */
 	@Autowired
 	GrupoRepository grupoRepository;
+	
+	@Autowired
+	GrupoCrudRepository grupoCrudRepository;
 
 	/**
 	 * Obtiene todos los grupos de investigación.
@@ -370,6 +377,11 @@ public class GrupoDAO {
 	 */
 	public List<Grupo> getGruposNoReconocidosCentro(Long centroId) {
 		return grupoRepository.getGruposNoReconocidosCentro(centroId);
+	}
+	
+	@Override
+	public CrudRepository<Grupo, Long> getCrudRepository() {
+		return grupoCrudRepository;
 	}
 
 
