@@ -50,6 +50,11 @@ public class Facultad implements Serializable {
 	 */
 	@Column(name = "CONTACTO")
 	private String contacto;
+	
+	/** The activo */
+	@Column(name = "ACTIVO")
+	private boolean activo;	
+	
 
 	/** The centros. */
 	@OneToMany(mappedBy = "facultad", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -169,6 +174,24 @@ public class Facultad implements Serializable {
 	 */
 	public void setContacto(String contacto) {
 		this.contacto = contacto;
+	}
+	
+	/**
+	 * Sets the activo.
+	 *
+	 * @param categoria the new activo
+	 */
+	public boolean isActivo() {
+		return activo;
+	}
+
+	/**
+	 * Sets the activo.
+	 *
+	 * @param activo the new activo
+	 */
+	public void setActivo(boolean activo) {
+		this.activo = activo;
 	}
 
 	/**

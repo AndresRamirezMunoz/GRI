@@ -1,5 +1,7 @@
 package co.edu.uniquindio.gri.utilities;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class Util {
 
 	public static final String PERTENENCIA_INDEFINIDO = "INDEFINIDO";
 	public static final String PERTENENCIA_DOCENTE_PLANTA = "DOCENTE PLANTA";
-	public static final String PERTENENCIA_DOCENTE_CATEDRATICO = "DOCENTE CATEDRÃ�TICO";
+	public static final String PERTENENCIA_DOCENTE_CATEDRATICO = "DOCENTE CATEDRÃƒï¿½TICO";
 	public static final String PERTENENCIA_DOCENTE_OCASIONAL = "DOCENTE OCASIONAL";
 	public static final String PERTENENCIA_ADMINISTRATIVO = "ADMINISTRATIVO";
 	public static final String PERTENENCIA_EXTERNO = "INVESTIGADOR EXTERNO";
@@ -82,7 +84,7 @@ public class Util {
 	public static final String CATEGORIA_A = "A";
 	public static final String CATEGORIA_B = "B";
 	public static final String CATEGORIA_C = "C";
-	public static final String CATEGORIA_RECONOCIDO = "SIN CATEGORÍA";
+	public static final String CATEGORIA_RECONOCIDO = "SIN CATEGORÃ�A";
 	public static final String CATEGORIA_NO_RECONOCIDO = "N/D";
 
 	/**
@@ -153,7 +155,7 @@ public class Util {
 
 				if (pertenecia_investigador.getPertenencia().contains("CATED")) {
 
-					investigador.setPertenencia("DOCENTE CATEDRÃ�TICO");
+					investigador.setPertenencia("DOCENTE CATEDRÃƒï¿½TICO");
 
 				} else {
 					investigador.setPertenencia(pertenecia_investigador.getPertenencia());
@@ -225,7 +227,7 @@ public class Util {
 	}
 
 	/**
-	 * Metodo que permite codificar contraseÃ±a
+	 * Metodo que permite codificar contraseÃƒÂ±a
 	 * 
 	 * @param unCode
 	 * @return
@@ -238,7 +240,7 @@ public class Util {
 	}
 
 	/**
-	 * MÃ©todo que retorna los casos de revisiÃ³n segun las listas de producciones
+	 * MÃƒÂ©todo que retorna los casos de revisiÃƒÂ³n segun las listas de producciones
 	 * ingresadas
 	 * 
 	 * @param casos         los casos de produccion
@@ -270,7 +272,7 @@ public class Util {
 	}
 
 	/**
-	 * MÃ©todo que retorna los nombres de casos de revisiÃ³n segun las listas de
+	 * MÃƒÂ©todo que retorna los nombres de casos de revisiÃƒÂ³n segun las listas de
 	 * producciones ingresadas
 	 * 
 	 * @param casos         los casos de produccion
@@ -393,6 +395,16 @@ public class Util {
 		}
 
 		return resutado;
+	}
+
+	/**
+	 * Permite obtener la fecha del sistema(año y mes)
+	 * @return fecha del sistema
+	 */
+	public String obtenerFechaSistma() {
+		LocalDate localDate = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy - M");
+		return localDate.format(formatter);
 	}
 
 }

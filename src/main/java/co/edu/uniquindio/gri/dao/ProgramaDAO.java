@@ -101,7 +101,7 @@ public class ProgramaDAO extends GenericServiceImpl<Programa, Long> implements P
 	 * @return lista de los programas pertenecientes a la facultad idFacultad y el
 	 *         tipo de programa maestria
 	 */
-	public List<Programa> getProgramasMaestríaFacultad(long facultadId) {
+	public List<Programa> getProgramasMaestriaFacultad(long facultadId) {
 		return programaRepository.getProgramasMaestriaFacultad(facultadId);
 	}
 	

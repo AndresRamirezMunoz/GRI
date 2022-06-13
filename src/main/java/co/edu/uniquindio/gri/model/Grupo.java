@@ -27,7 +27,7 @@ public class Grupo implements Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
-	
+
 	/** The id. */
 	@Id
 	@Column(name = "ID", length = 300)
@@ -55,11 +55,15 @@ public class Grupo implements Serializable {
 
 	/** The información General */
 	@Column(name = "INFORMACIONGENERAL")
-	private String informaciongeneral;
+	private String informacionGeneral;
 
 	/** The contacto */
 	@Column(name = "CONTACTO")
 	private String contacto;
+
+	/** The activo */
+	@Column(name = "ACTIVO")
+	private boolean activo;
 
 	/** The lineas investigacion. */
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -93,8 +97,7 @@ public class Grupo implements Serializable {
 	@OneToMany(mappedBy = "grupos", cascade = CascadeType.MERGE)
 	@JsonIgnore
 	private List<GruposInves> investigadores = new ArrayList<GruposInves>();
-	
-	
+
 	/**
 	 * Instantiates a new grupo.
 	 *
@@ -110,7 +113,7 @@ public class Grupo implements Serializable {
 	 * @param centro                  the centro
 	 */
 	public Grupo(long id, String nombre, String areaConocimiento, String anioFundacion, String lider, String categoria,
-			String informaciongeneral, String contacto, List<LineasInvestigacion> lineasInvestigacion,
+			String informacionGeneral, String contacto, List<LineasInvestigacion> lineasInvestigacion,
 			List<ProduccionGrupo> produccion, List<ProduccionBGrupo> produccionBibliografica, Centro centro,
 			List<GruposInves> investigadores) {
 		this.id = id;
@@ -119,7 +122,7 @@ public class Grupo implements Serializable {
 		this.anioFundacion = anioFundacion;
 		this.lider = lider;
 		this.categoria = categoria;
-		this.informaciongeneral = informaciongeneral;
+		this.informacionGeneral = informacionGeneral;
 		this.contacto = contacto;
 		this.lineasInvestigacion = lineasInvestigacion;
 		this.produccion = produccion;
@@ -277,13 +280,31 @@ public class Grupo implements Serializable {
 	}
 
 	/**
+	 * Sets the activo.
+	 *
+	 * @param categoria the new activo
+	 */
+	public boolean isActivo() {
+		return activo;
+	}
+
+	/**
+	 * Sets the activo.
+	 *
+	 * @param activo the new activo
+	 */
+	public void setActivo(boolean activo) {
+		this.activo = activo;
+	}
+
+	/**
 	 * get informacion general
 	 * 
 	 * @return informacion deneral
 	 */
 
-	public String getInformaciongeneral() {
-		return informaciongeneral;
+	public String getInformacionGeneral() {
+		return informacionGeneral;
 	}
 
 	/**
@@ -291,13 +312,13 @@ public class Grupo implements Serializable {
 	 * 
 	 * @param informaciongeneral the new informaciongeneral
 	 */
-	public void setInformaciongeneral(String informaciongeneral) {
-		this.informaciongeneral = informaciongeneral;
+	public void setInformacionGeneral(String informacionGeneral) {
+		this.informacionGeneral = informacionGeneral;
 	}
-	
-	
+
 	/**
 	 * Gets the contacto
+	 * 
 	 * @return the contacto
 	 */
 	public String getContacto() {
@@ -306,6 +327,7 @@ public class Grupo implements Serializable {
 
 	/**
 	 * Sets the contacto
+	 * 
 	 * @param the new contacto
 	 */
 	public void setContacto(String contacto) {
@@ -468,7 +490,7 @@ public class Grupo implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Grupo other = (Grupo) obj;
-        return id == other.id;
-    }
+		return id == other.id;
+	}
 
 }
