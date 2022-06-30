@@ -40,6 +40,7 @@ import co.edu.uniquindio.gri.model.CasoRevisionProduccion;
 import co.edu.uniquindio.gri.model.Centro;
 import co.edu.uniquindio.gri.model.Facultad;
 import co.edu.uniquindio.gri.model.Grupo;
+import co.edu.uniquindio.gri.model.GruposInves;
 import co.edu.uniquindio.gri.model.Investigador;
 import co.edu.uniquindio.gri.model.ProduccionBGrupo;
 import co.edu.uniquindio.gri.model.ProduccionGrupo;
@@ -127,6 +128,22 @@ public class WebController {
 
 	}
 
+	@GetMapping("/Adminvestigadores")
+	public String getAllInvestigadores(Model model) {
+		// model.addAttribute("titulo", "Grupos");
+		model.addAttribute("id", 0);
+		model.addAttribute("ruta", System.getProperty("user.home")+"\\Pictures\\");
+
+		List<Grupo> grupo = new ArrayList<>();
+		model.addAttribute("grupo", grupo);
+		model.addAttribute("grupos", grupoDAO.getAll());
+
+		model.addAttribute("listaInvestigadores", investigadorDAO.findAll());
+//		model.addAttribute("listaGrupos", grupoDAO.getAll());
+
+		return "admin/investigadores/investigadores";
+	}
+	
 	@GetMapping("/investigadoresP")
 	public String getInvestigadoresPertenencia(
 			@RequestParam(name = "type", required = false, defaultValue = "u") String type,
@@ -627,7 +644,42 @@ public class WebController {
 
 		return "investigadores";
 	}
+	
+	@PostMapping("Investigadores/save/{idInvestigador}")
+	public @ResponseBody Respuesta saveInvestigadores(Investigador investigador, @PathVariable("idInvestigador") Long idInvestigador) {
 
+		Respuesta respuesta = new Respuesta();
+		if (investigador != null) {
+
+			Investigador consulta = investigadorDAO.findOne(investigador.getId());
+			
+			Investigador peticion = new Investigador();
+			peticion.setId(investigador.getId());
+			peticion.setNombre(investigador.getNombre());
+			peticion.setNivelAcademico(investigador.getNivelAcademico());
+			peticion.setCategoria(investigador.getCategoria());
+			peticion.setPertenencia(investigador.getPertenencia());
+			peticion.setSexo(investigador.getSexo());
+//			peticion.setActivo(true);
+
+			if (consulta == null) {
+
+				// guardar
+				Util util = new Util();
+				investigadorDAO.save(peticion);
+				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
+				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_CREAR_CENTRO_CORRECTO);
+			} else {
+
+				// actualizar
+				investigadorDAO.save(peticion);
+				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
+				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_MODIFICAR_CENTRO_CORRECTO);
+			}
+		}	
+		return respuesta;
+	}
+	
 	@GetMapping("/programas")
 	public String getProgramas(
 			@RequestParam(name = Util.PARAM_TYPE, required = false, defaultValue = Util.UNIVERSITY_PARAM_ID) String type,
@@ -771,6 +823,18 @@ public class WebController {
 
 		return "redirect:/Admgrupos";
 	}
+	
+	@GetMapping("Investigadores/active/{id}")
+	public String activeInvestigador(@PathVariable("id") Long id) {
+
+		
+		Investigador investigador = investigadorDAO.findOne(id);
+		investigador.setActivo(!investigador.isActivo());
+		investigadorDAO.save(investigador);
+
+		return "redirect:/Admgrupos";
+	}
+	
 
 
 	@GetMapping("/grupos")

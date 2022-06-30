@@ -14,7 +14,7 @@ import co.edu.uniquindio.gri.model.Investigador;
 @Repository
 public interface InvestigadorRepository extends JpaRepository<Investigador, Long> {
 
-	String MODELO_INVESTIGADOR = "co.edu.uniquindio.gri.model.Investigador(i.id, i.nombre, i.categoria, i.nivelAcademico, i.pertenencia,i.sexo)";
+	String MODELO_INVESTIGADOR = "co.edu.uniquindio.gri.model.Investigador(i.id, i.nombre, i.categoria, i.nivelAcademico, i.pertenencia,i.sexo, i.activo)";
 	String MODELO_INVESTIGADOR_NATIVE_QUERY = "i.id, i.nombre, i.categoria, i.nivelAcademico, i.pertenencia, i.sexo";
 	
 

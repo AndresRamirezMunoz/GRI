@@ -12,43 +12,34 @@
         <h2 id="idTitleCrearGrupo"></h2>
         <form th:object="${grupo}" method="post" id="guardarGruposModal">
             <div class="form-group">
-                <label>Id del Grupo: <b style="color: red">*</b></label> <input type="text" class="form-control inputGrupos requaired" name="id" id="id" placeholder="Ingrese el ID del Grupo"> <small id="emailHelp" class="form-text text-muted">El ID lo puede obtener de GrupLab.</small>
+                <label>Id del Grupo: </label> <input type="text" readonly class="form-control inputGrupos" name="id" id="id" placeholder="Ingrese el ID del Grupo"> <small id="emailHelp" class="form-text text-muted">El ID lo puede obtener de GrupLab.</small>
             </div>
             <div class="form-group">
-                <label>Nombre del Grupo: <b style="color: red">*</b></label> <input type="text" class="form-control inputGrupos requaired" name="nombre" id="nombre" placeholder="Ingrese nombre del Grupo">
+                <label>Nombre del Grupo: </label> <input type="text" readonly class="form-control inputGrupos" name="nombre" id="nombre" placeholder="Ingrese nombre del Grupo">
             </div>
             <div class="form-group">
-                <label>Lider del Grupo: <b style="color: red">*</b></label> <input type="text" class="form-control inputGrupos requaired" name="lider" id="lider" placeholder="Ingrese lider del Grupo">
+                <label>Lider del Grupo: </label> <input type="text" readonly class="form-control inputGrupos" name="lider" id="lider" placeholder="Ingrese lider del Grupo">
             </div>
             <div class="form-group">
-                <label>Área de conocimiento: <b style="color: red">*</b></label> <input type="text" class="form-control inputGrupos requaired" name="areaConocimiento" id="areaConocimiento" placeholder="Ingrese el area de conocimiento del Grupo">
+                <label>Área de conocimiento: </label> <input type="text" readonly class="form-control inputGrupos" name="areaConocimiento" id="areaConocimiento" placeholder="Ingrese el area de conocimiento del Grupo">
             </div>
             <div class="form-group">
-                <label>Informacion general:</label><input type="text" class="form-control inputGrupos" name="informacionGeneral" id="informacionGeneral" placeholder="Informacion general">
+                <label>Informacion general:</label><input type="text" readonly class="form-control inputGrupos" name="informacionGeneral" id="informacionGeneral" placeholder="Informacion general">
             </div>
             <div class="form-group" style="display: none">
-                <label>anioFundacion:</label><input type="text" class="form-control inputGrupos" name="anioFundacion" id="anioFundacion" placeholder="Informacion general">
+                <label>anioFundacion:</label><input type="text" readonly class="form-control inputGrupos" name="anioFundacion" id="anioFundacion" placeholder="Informacion general">
             </div>
             <div class="form-group">
-                <label for="exampleInputPassword1">Categoria: <b style="color: red">*</b></label> <select class="custom-select requaired" id="categoria" name="categoria">
-                    <option value="0">Sin categoria</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="A1">A1</option>
-                    <option value="SIN CATEGORÍA">RECONOCIDO</option>
-                    <option value="N/D">NO RECONOCIDO</option>
-
-                </select>
+            	<label>Categoria:</label><input type="text" readonly class="form-control inputGrupos" name="categoria" id="categoria" placeholder="Categoria">
             </div>
             <div class="form-group" th:object="${centro}">
-                <label for="exampleInputPassword1">Centro: <b style="color: red">*</b></label>
+                <label for="exampleInputPassword1">Centro: </label><b style="color: red">*</b>
                 <select class="form-control custom-select requaired" id="centro" name="centro">
                     <option th:each="centro : ${centros}" th:value="${centro.id}" th:text="${centro.nombre}"></option>
                 </select>
             </div>
             <div class="form-group" th:object="${programa}">
-                <label for="exampleInputPassword1">Programa: <b style="color: red">*</b></label>
+                <label for="exampleInputPassword1">Programa: </label><b style="color: red">*</b>
                 <select class="form-control custom-select requaired" id="programa" name="programa">
                     <option th:each="programa : ${programas}" th:value="${programa.id}" th:text="${programa.nombre}"></option>
                 </select>
