@@ -312,7 +312,8 @@
 			columns: [
 				{ data: "id", visible: false },
 				{ data: "nombre" },
-				{ data: "facultad" }
+				{ data: "facultad" },
+				{ data: "activo" }
 			]
 		});
 
@@ -398,7 +399,8 @@
 			"order": [[1, "asc"]],
 			columns: [
 				{ data: "id", visible: false },
-				{ data: "nombre" }
+				{ data: "nombre" },
+				{ data: "activo" }
 			]
 		});
 
@@ -423,7 +425,8 @@
 			columns: [
 				{ data: "id", "visible": false },
 				{ data: "nombre" },
-				{ data: "facultad.nombre" }
+				{ data: "facultad.nombre" },
+				{ data: "activo" }
 			]
 		});
 
@@ -452,7 +455,8 @@
 				{ data: "centro.nombre" },
 				{ data: "nombre" },
 				{ data: "lider" },
-				{ data: "categoria" }
+				{ data: "categoria" },
+				{ data: "activo" }
 			]
 		});
 

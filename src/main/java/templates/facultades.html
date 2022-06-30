@@ -31,12 +31,17 @@
 							<tr>
 								<th></th>
 								<th>NOMBRE</th>
+								<th>ACTIVO</th>
 							</tr>
 						</thead>
 						<tbody>
 							<tr th:each="facultad : ${listaFacultades}">
 								<td th:text="${facultad.id}"></td>
 								<td th:text="${facultad.nombre}"></td>
+								<td ><a th:switch="${facultad.activo}">
+                                                <span th:case="true">Activo</span>
+                                                <span th:case="false">Inactivo</span>
+                                            </a></td>
 							</tr>
 						</tbody>
 					</table>

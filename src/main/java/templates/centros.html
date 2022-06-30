@@ -34,6 +34,7 @@
 								<th></th>
 								<th>NOMBRE</th>
 								<th>FACULTAD</th>
+								<th>ACTIVO</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -41,6 +42,10 @@
 								<td th:text="${centro.id}"></td>
 								<td th:text="${centro.nombre}"></td>
 								<td th:text="${centro.facultad.nombre}"></td>
+								<td ><a th:switch="${centro.activo}">
+                                                <span th:case="true">Activo</span>
+                                                <span th:case="false">Inactivo</span>
+                                            </a></td>
 							</tr>
 						</tbody>
 					</table>
