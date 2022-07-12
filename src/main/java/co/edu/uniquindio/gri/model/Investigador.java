@@ -385,4 +385,11 @@ public class Investigador implements Serializable {
 		Investigador other = (Investigador) obj;
         return id == other.id;
     }
+
+	@Override
+	public String toString() {
+		return "Investigador [id=" + id + ", nombre=" + nombre + "]";
+	}
+	
+	
 }

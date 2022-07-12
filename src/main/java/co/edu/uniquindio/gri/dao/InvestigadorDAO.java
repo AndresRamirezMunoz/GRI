@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
-import co.edu.uniquindio.gri.CrudRepository.GrupoCrudRepository;
 import co.edu.uniquindio.gri.CrudRepository.InvestigadorCrudRepository;
 import co.edu.uniquindio.gri.model.Investigador;
 import co.edu.uniquindio.gri.model.LiderGrupo;

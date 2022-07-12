@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header('Modal_GruposInves')">
+<meta charset="utf-8" />
+
+</head>
+
+<div id="agregarGruposInvesModal" class="modalContainer">
+	<div class="modal-contentCruds">
+		<span class="closeModalGruposInves"></span>
+		<h2 id="idTitleCrearGruposInves"></h2>
+
+		<form th:object="${gruposInves}" method="post"
+			id="guardarGruposInvesModal">
+
+			<div class="form-group" th:object="${grupo}">
+				<label for="exampleInputPassword1">Grupo: </label><b
+					style="color: red">*</b> <select
+					class="form-control custom-select requaired" id="grupo"
+					name="grupo">
+					<option value="" selected>Seleccione un grupo</option>
+					<option th:each="grupo : ${listaGrupos}" th:value="${grupo.id}"
+						th:text="${grupo.nombre}"></option>
+				</select>
+			</div>
+<!-- 			<div class="form-group" th:object="${investigador}"> -->
+<!-- 				<label for="exampleInputPassword1">Investigador: </label><b -->
+<!-- 					style="color: red">*</b> <select -->
+<!-- 					class="form-control custom-select requaired" id="investigador" -->
+<!-- 					name="investigador"> -->
+<!-- 					<option value="" selected>Seleccione un investigador</option> -->
+<!-- 					<option th:each="investigador : ${listaInvestigadores}" -->
+<!-- 						th:value="${investigador.id}" th:text="${investigador.nombre}"></option> -->
+<!-- 				</select> -->
+<!-- 			</div> -->
+
+			<div class="form-group" >
+				<label for="investigador">Investigador:<b style="color: red">*</b></label>
+				
+				<input class="form-control inputGrupos" list="investigadors" name="investigador" id="investigador" placeholder="Seleccione un investigador">
+				
+				<datalist id="investigadors" style= "width: auto; height: auto"  >
+					<option value="" selected>Seleccione un investigador</option>
+					<option th:each="investigador : ${listaInvestigadores}" th:value="${investigador.id}" th:text="${investigador.nombre}"></option>
+				</datalist>
+			</div>
+
+			<div align="right" class="mt-5">
+				<a href="#" class="closeModalGruposInves">Cancelar</a>
+				<button type="submit" class="btn btn-primary btnModalGuardar"
+					id="BtnGuardarInvesGrupo">
+					<i class="fas fa-save"></i> Guardar
+				</button>
+			</div>
+		</form>
+	</div>
+</div>

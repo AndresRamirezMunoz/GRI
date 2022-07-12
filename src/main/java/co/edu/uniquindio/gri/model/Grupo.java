@@ -493,4 +493,10 @@ public class Grupo implements Serializable {
 		return id == other.id;
 	}
 
+	@Override
+	public String toString() {
+		return "Grupo [id=" + id + ", nombre=" + nombre + "]";
+	}
+	
+
 }

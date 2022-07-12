@@ -119,6 +119,18 @@
                                 </a>
                             </div>
                         </li>
+                        <li class="ci-2 cards-item" th:classappend="${tamanio}" sec:authorize="hasRole('ROLE_ADMIN')">
+                            <div class="card">
+                                <a class="card-container" href="AdmGruposInves" rel="keep-params">
+                                    <div class="card-icon card-icon-1">
+                                        <span class="icono fas fa-layer-group"></span>
+                                    </div>
+                                    <div class="card-title-container">
+                                        <h3 class="card-title">Administración de Grupos-Investigadores</h3>
+                                    </div>
+                                </a>
+                            </div>
+                        </li>
                     </ul>
                 </div>
             </div>

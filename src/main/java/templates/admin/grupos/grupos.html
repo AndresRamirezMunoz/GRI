@@ -203,7 +203,6 @@
 	    $('#guardarGruposModal').on('submit', function(e) {
 	        e.preventDefault();
 	        let data = $(this).serialize();
-	        console.log(data)
 	        $.ajax({
 	            type: "POST",
 	            url: "grupos/save/" + idCentroSeleccionado + "/" + idProgramaSeleccionado,

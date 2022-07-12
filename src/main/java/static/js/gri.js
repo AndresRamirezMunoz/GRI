@@ -1,5 +1,8 @@
 (function ($) {
 	$(document).ready(function () {
+		
+		
+		
 
 		// Ampliar/Reducir la barra lateral
 		$("#sidebarToggle").on('click', function (e) {
@@ -874,3 +877,5 @@ function estilosBotones() {
 	$(".btn").addClass("text-white");
 	$(".btn").css("text-shadow", "none")
 }
+
+

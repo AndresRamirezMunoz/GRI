@@ -3,6 +3,7 @@ package co.edu.uniquindio.gri.webcontroller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -29,6 +30,7 @@ import co.edu.uniquindio.gri.dao.CasoRevisionProduccionDAO;
 import co.edu.uniquindio.gri.dao.CentroDAO;
 import co.edu.uniquindio.gri.dao.FacultadDAO;
 import co.edu.uniquindio.gri.dao.GrupoDAO;
+import co.edu.uniquindio.gri.dao.GruposInvesDAO;
 import co.edu.uniquindio.gri.dao.InvestigadorDAO;
 import co.edu.uniquindio.gri.dao.LineasInvestigacionDAO;
 import co.edu.uniquindio.gri.dao.PertenenciaDAO;
@@ -38,6 +40,7 @@ import co.edu.uniquindio.gri.dao.ReconocimientosDAO;
 import co.edu.uniquindio.gri.dao.UserDAO;
 import co.edu.uniquindio.gri.model.CasoRevisionProduccion;
 import co.edu.uniquindio.gri.model.Centro;
+import co.edu.uniquindio.gri.model.CompositeKey;
 import co.edu.uniquindio.gri.model.Facultad;
 import co.edu.uniquindio.gri.model.Grupo;
 import co.edu.uniquindio.gri.model.GruposInves;
@@ -100,6 +103,11 @@ public class WebController {
 
 	@Autowired
 	Util utilidades = new Util();
+	
+	@Autowired
+	GruposInvesDAO gruposInvesDAO;
+	
+	
 
 	@GetMapping(value = { "/", "inicio" })
 	public String main(Model model) {
@@ -111,9 +119,12 @@ public class WebController {
 		model.addAttribute(Util.CANTIDAD_GRUPOS, stats.get(Util.CANTIDAD_GRUPOS_ID));
 		model.addAttribute(Util.CANTIDAD_INVESTIGADORES, stats.get(Util.CANTIDAD_INVESTIGADORES_ID));
 		model.addAttribute(Util.ESTATICA_ESTADISTICAS, "");
-
+		
 		return "index";
+		
 	}
+	
+	
 
 	@GetMapping("/login")
 	public String getLogin(Model model) {
@@ -128,6 +139,25 @@ public class WebController {
 
 	}
 
+	@GetMapping("/AdmGruposInves")
+	public String getAllGruposInves(Model model) {
+		model.addAttribute("id", 0);
+		model.addAttribute("ListaGruposInves", gruposInvesDAO.findAll());
+		
+		model.addAttribute("listaInvestigadores", investigadorDAO.findAll());
+		model.addAttribute("listaGrupos", grupoDAO.findAll());
+		
+		List<Grupo> grupo = new ArrayList<>();
+		List<Investigador> investigador = new ArrayList<>();
+		
+		model.addAttribute("grupo", grupo);
+		model.addAttribute("investigador", investigador);
+		
+		
+		return "admin/gruposInves/gruposInves";
+	}
+	
+	
 	@GetMapping("/Adminvestigadores")
 	public String getAllInvestigadores(Model model) {
 		// model.addAttribute("titulo", "Grupos");
@@ -771,7 +801,7 @@ public class WebController {
 	public @ResponseBody Respuesta saveGrupo(Grupo grupo, @PathVariable("idCentro") Long idCentro,
 			@PathVariable("idPrograma") Long idPrograma) {
 
-		System.out.println(grupo);
+		
 		Respuesta respuesta = new Respuesta();
 
 		if (grupo != null) {
@@ -810,6 +840,43 @@ public class WebController {
 				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_MODIFICAR_CENTRO_CORRECTO);
 			}
 		}	
+		return respuesta;
+	}
+	
+	@GetMapping("gruposInves/active/{idGrupo}/{idInvestigador}")
+	public String activeGruposInves(@PathVariable("idGrupo") Long idGrupo, @PathVariable("idInvestigador") Long idInvestigador) {
+		
+		CompositeKey id = new CompositeKey(idGrupo, idInvestigador);
+		
+		GruposInves gruposInves = gruposInvesDAO.findOne(id);
+		gruposInves.setEstado(gruposInves.getEstado().equals("ACTUAL")?"NO ACTUAL":"ACTUAL");
+		gruposInvesDAO.save(gruposInves);
+
+		return "redirect:/AdmGruposInves";
+	}
+	
+	
+	
+	@PostMapping("gruposInves/save/{idGrupo}/{idInvestigador}")
+	public @ResponseBody Respuesta crearGruposInves(@PathVariable("idGrupo") Long idGrupo, @PathVariable("idInvestigador") Long idInvestigador) {
+		
+		CompositeKey id = new CompositeKey(idGrupo, idInvestigador);
+		
+		Respuesta respuesta = new Respuesta();
+		GruposInves consulta= gruposInvesDAO.findOne(id);
+		
+		if (consulta==null) {
+			Investigador investigador = investigadorDAO.findOne(idInvestigador);
+			Grupo grupo = grupoDAO.findOne(idGrupo);
+			GruposInves gruposInves = new GruposInves(grupo, investigador, "ACTUAL");
+			gruposInvesDAO.save(gruposInves);
+			respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
+			respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_CREAR_GRUPO_INVESTIGADOR_CORRECTO);
+		}else {
+			respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_ERROR);
+			respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_GRUPO_INVESTIGADOR_ERROR);
+		}
+		
 		return respuesta;
 	}
 	
