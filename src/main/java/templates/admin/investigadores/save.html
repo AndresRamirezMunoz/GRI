@@ -10,7 +10,7 @@
     <div class="modal-contentCruds">
         <span class="closeModalInvestigador"></span>
         <h2 id="idTitleCrearInvestigador"></h2>
-        <form th:object="${Investigador}" method="post" id="guardarInvestigadoresModal">
+        <form th:action="@{/Investigadores/save}" th:object="${investigador}" method="post" enctype="multipart/form-data">
             <div class="form-group">
                 <label>Id del Investigador: </label> <input type="text" readonly class="form-control inputInvestigadores" name="id" id="id" placeholder="Ingrese el ID del Investigador"> <small id="emailHelp" class="form-text text-muted">El ID del investigador.</small>
             </div>
@@ -29,9 +29,16 @@
             <div class="form-group">
                 <label>Sexo: </label> <input type="text" readonly class="form-control inputInvestigadores " name="sexo" id="sexo" placeholder="Ingrese sexo">
             </div>
+            <div>
+            	<label>Foto: </label>
+    			<input type="file" name="fileImage" id="fileImage" accept="image/png, image/jpeg" onchange="document.getElementById('thumbnail').src = window.URL.createObjectURL(this.files[0])"/>
+    			<small id="emailHelp" class="form-text text-muted">Tamaño maximo de 2MB.</small>
+    			<img class="img-centro" alt="Foto preview" id="thumbnail" width="300">
+    			
+            </div>
             <div align="right" class="mt-5">
                 <a href="#" class="closeModalInvestigador">Cancelar</a>
-                <button type="submit" class="btn btn-primary btnModalGuardar" id="BtnGuardarInvestigador">
+                <button type="submit" class="btn btn-primary btnModalGuardar">
                     <i class="fas fa-save"></i> Guardar
                 </button>
             </div>

@@ -49,6 +49,9 @@ public class Investigador implements Serializable {
 	private String pertenencia;
 	@Column(name = "SEXO", length = 50)
 	private String sexo;
+	
+	@Column(name = "FOTO", length = 50)
+	private String foto;
 
 	/** The idiomas. */
 	@OneToMany(mappedBy = "investigador", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -133,7 +136,7 @@ public class Investigador implements Serializable {
 	 * @param nivelAcademico the nivel academico
 	 * @param pertenencia    the pertenencia
 	 */
-	public Investigador(long id, String nombre, String categoria, String nivelAcademico, String pertenencia,String sexo, boolean activo) {
+	public Investigador(long id, String nombre, String categoria, String nivelAcademico, String pertenencia,String sexo, boolean activo, String foto) {
 		this.id = id;
 		this.nombre = nombre;
 		this.categoria = categoria;
@@ -142,6 +145,7 @@ public class Investigador implements Serializable {
 		this.pertenencia = pertenencia;
 		this.sexo=sexo;
 		this.activo=activo;
+		this.foto=foto;
 	}
 
 	/**
@@ -236,6 +240,15 @@ public class Investigador implements Serializable {
 
 	public void setActivo(boolean activo) {
 		this.activo = activo;
+	}
+
+	
+	public String getFoto() {
+		return foto;
+	}
+
+	public void setFoto(String foto) {
+		this.foto = foto;
 	}
 
 	/**
