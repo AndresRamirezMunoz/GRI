@@ -1,11 +1,22 @@
 package co.edu.uniquindio.gri.utilities;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import co.edu.uniquindio.gri.dao.PertenenciaDAO;
 import co.edu.uniquindio.gri.dao.ProduccionDAO;
@@ -27,7 +38,7 @@ public class Util {
 
 	public static final String PERTENENCIA_INDEFINIDO = "INDEFINIDO";
 	public static final String PERTENENCIA_DOCENTE_PLANTA = "DOCENTE PLANTA";
-	public static final String PERTENENCIA_DOCENTE_CATEDRATICO = "DOCENTE CATEDRÃ�TICO";
+	public static final String PERTENENCIA_DOCENTE_CATEDRATICO = "DOCENTE CATEDRÃƒï¿½TICO";
 	public static final String PERTENENCIA_DOCENTE_OCASIONAL = "DOCENTE OCASIONAL";
 	public static final String PERTENENCIA_ADMINISTRATIVO = "ADMINISTRATIVO";
 	public static final String PERTENENCIA_EXTERNO = "INVESTIGADOR EXTERNO";
@@ -82,8 +93,12 @@ public class Util {
 	public static final String CATEGORIA_A = "A";
 	public static final String CATEGORIA_B = "B";
 	public static final String CATEGORIA_C = "C";
-	public static final String CATEGORIA_RECONOCIDO = "SIN CATEGORÍA";
+	public static final String CATEGORIA_RECONOCIDO = "SIN CATEGORÃ�A";
 	public static final String CATEGORIA_NO_RECONOCIDO = "N/D";
+
+	public static final String DIRECTORIO_IMAGENES_INVESTIGADOR_LOCAL = System.getProperty("user.home")
+			+ "\\GRI\\images\\investigador\\";
+	public static final String DIRECTORIO_IMAGENES_INVESTIGADOR_SERVER = "img/investigador";
 
 	/**
 	 * constructor de la clase Util
@@ -153,7 +168,7 @@ public class Util {
 
 				if (pertenecia_investigador.getPertenencia().contains("CATED")) {
 
-					investigador.setPertenencia("DOCENTE CATEDRÃ�TICO");
+					investigador.setPertenencia("DOCENTE CATEDRÃƒï¿½TICO");
 
 				} else {
 					investigador.setPertenencia(pertenecia_investigador.getPertenencia());
@@ -225,7 +240,7 @@ public class Util {
 	}
 
 	/**
-	 * Metodo que permite codificar contraseÃ±a
+	 * Metodo que permite codificar contraseÃƒÂ±a
 	 * 
 	 * @param unCode
 	 * @return
@@ -238,8 +253,8 @@ public class Util {
 	}
 
 	/**
-	 * MÃ©todo que retorna los casos de revisiÃ³n segun las listas de producciones
-	 * ingresadas
+	 * MÃƒÂ©todo que retorna los casos de revisiÃƒÂ³n segun las listas de
+	 * producciones ingresadas
 	 * 
 	 * @param casos         los casos de produccion
 	 * @param produccionesb las producciones
@@ -270,7 +285,7 @@ public class Util {
 	}
 
 	/**
-	 * MÃ©todo que retorna los nombres de casos de revisiÃ³n segun las listas de
+	 * MÃƒÂ©todo que retorna los nombres de casos de revisiÃƒÂ³n segun las listas de
 	 * producciones ingresadas
 	 * 
 	 * @param casos         los casos de produccion
@@ -393,6 +408,33 @@ public class Util {
 		}
 
 		return resutado;
+	}
+
+	/**
+	 * Permite obtener la fecha del sistema(año y mes)
+	 * 
+	 * @return fecha del sistema
+	 */
+	public String obtenerFechaSistma() {
+		LocalDate localDate = LocalDate.now();
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy - M");
+		return localDate.format(formatter);
+	}
+
+	
+	public static void saveFile(String uploadDir, String fileName, MultipartFile multipartFile) throws IOException {
+		Path uploadPath = Paths.get(uploadDir);
+
+		if (!Files.exists(uploadPath)) {
+			Files.createDirectories(uploadPath);
+		}
+
+		try (InputStream inputStream = multipartFile.getInputStream()) {
+			Path filePath = uploadPath.resolve(fileName);
+			Files.copy(inputStream, filePath, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException ioe) {
+			throw new IOException("Could not save image file: " + fileName, ioe);
+		}
 	}
 
 }

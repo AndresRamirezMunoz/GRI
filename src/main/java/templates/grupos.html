@@ -49,6 +49,7 @@
 								<th>CENTRO</th>
 								<th>LÍDER</th>
 								<th>CATEGORÍA</th>
+								<th>ACTIVO</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -67,6 +68,10 @@
 									<div th:case="*">
 										<div th:text="${grupo.categoria}"></div>
 									</div></td>
+								<td ><a th:switch="${grupo.activo}">
+                                                <span th:case="true">Activo</span>
+                                                <span th:case="false">Inactivo</span>
+                                            </a></td>
 							</tr>
 						</tbody>
 					</table>

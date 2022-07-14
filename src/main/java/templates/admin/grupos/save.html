@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header('Modal_Grupos')">
+    <meta charset="utf-8" />
+
+</head>
+
+<div id="agregarGruposModal" class="modalContainer">
+    <div class="modal-contentCruds">
+        <span class="closeModalGrupo"></span>
+        <h2 id="idTitleCrearGrupo"></h2>
+        <form th:object="${grupo}" method="post" id="guardarGruposModal">
+            <div class="form-group">
+                <label>Id del Grupo: </label> <input type="text" readonly class="form-control inputGrupos" name="id" id="id" placeholder="Ingrese el ID del Grupo"> <small id="emailHelp" class="form-text text-muted">El ID lo puede obtener de GrupLab.</small>
+            </div>
+            <div class="form-group">
+                <label>Nombre del Grupo: </label> <input type="text" readonly class="form-control inputGrupos" name="nombre" id="nombre" placeholder="Ingrese nombre del Grupo">
+            </div>
+            <div class="form-group">
+                <label>Lider del Grupo: </label> <input type="text" readonly class="form-control inputGrupos" name="lider" id="lider" placeholder="Ingrese lider del Grupo">
+            </div>
+            <div class="form-group">
+                <label>Área de conocimiento: </label> <input type="text" readonly class="form-control inputGrupos" name="areaConocimiento" id="areaConocimiento" placeholder="Ingrese el area de conocimiento del Grupo">
+            </div>
+            <div class="form-group">
+                <label>Informacion general:</label><input type="text" readonly class="form-control inputGrupos" name="informacionGeneral" id="informacionGeneral" placeholder="Informacion general">
+            </div>
+            <div class="form-group" style="display: none">
+                <label>anioFundacion:</label><input type="text" readonly class="form-control inputGrupos" name="anioFundacion" id="anioFundacion" placeholder="Informacion general">
+            </div>
+            <div class="form-group">
+            	<label>Categoria:</label><input type="text" readonly class="form-control inputGrupos" name="categoria" id="categoria" placeholder="Categoria">
+            </div>
+            <div class="form-group" th:object="${centro}">
+                <label for="exampleInputPassword1">Centro: </label><b style="color: red">*</b>
+                <select class="form-control custom-select requaired" id="centro" name="centro">
+                    <option th:each="centro : ${centros}" th:value="${centro.id}" th:text="${centro.nombre}"></option>
+                </select>
+            </div>
+            <div class="form-group" th:object="${programa}">
+                <label for="exampleInputPassword1">Programa: </label><b style="color: red">*</b>
+                <select class="form-control custom-select requaired" id="programa" name="programa">
+                    <option th:each="programa : ${programas}" th:value="${programa.id}" th:text="${programa.nombre}"></option>
+                </select>
+            </div>
+            <div align="right" class="mt-5">
+                <a href="#" class="closeModalGrupo">Cancelar</a>
+                <button type="submit" class="btn btn-primary btnModalGuardar" id="BtnGuardarGrupo">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

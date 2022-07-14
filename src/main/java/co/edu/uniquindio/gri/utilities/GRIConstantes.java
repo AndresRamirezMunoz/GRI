@@ -29,5 +29,8 @@ public class GRIConstantes {
 	public static final String RESPUESTA_MODIFICAR_CENTRO_CORRECTO="El centro se ha modificado exitosamente";
 	public static final String RESPUESTA_CREAR_PROGRAMA_CORRECTO="El programa se ha registrado con éxito";
 	public static final String RESPUESTA_MODIFICAR_PROGRAMA_CORRECTO="El programa se ha modificado exitosamente";
+	public static final String RESPUESTA_CREAR_GRUPO_INVESTIGADOR_CORRECTO="El investigador se ha relacionado con el grupo con éxito";
+	public static final String RESPUESTA_GRUPO_INVESTIGADOR_ERROR="El investigador ya se ha relacionado con este grupo";
+	
 
 }

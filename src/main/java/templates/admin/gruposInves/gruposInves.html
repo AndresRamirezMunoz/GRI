@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header('GruposInves')">
+<meta charset="utf-8" />
+
+
+		
+
+</head>
+
+<body id="page-top" class="sidebar-toggled">
+	<nav th:replace="fragments/nav :: nav('card-0-nav')"></nav>
+	<nav th:replace="fragments/secondarynav"></nav>
+
+	<div id="wrapper">
+		<div id="content-wrapper">
+			<div class="container-fluid">
+				<div class="region-hero">
+					<div class="contenedor-hero">
+						<div class="contenido-hero">
+							<h1 class="titulo-hero">Grupos Investigadores</h1>
+							Administración de Grupos Investigadores.
+						</div>
+					</div>
+				</div>
+				<div class="separador-1"></div>
+				<a class="btn btn-primary" id="btnCrearGruposInves">Relacionar
+					grupo investigador</a> <br /> <br />
+				<div class="contenedor mb-3">
+					<div class="contenedor-header">
+						<i class="fas fa-table"></i> Lista de relaciones
+					</div>
+					<div class="contenedor-body">
+						<div id="">
+						 <table id="tabla_GruposInves_CRUD"
+								th:class="'table-' + ${id} + ' table-striped table-bordered table-hover table-responsive-lg'"
+								style="width: 100%">
+								<thead>
+									<tr>
+										<th class="centrarItemsTabla">ID GRUPO</th>
+										<th class="centrarItemsTabla">NOMBRE GRUPO</th>
+										<th class="centrarItemsTabla">ID INVESTIGADOR</th>
+										<th class="centrarItemsTabla">NOMBRE INVESTIGADOR</th>
+										<th class="centrarItemsTabla">ESTADO</th>
+										<th class="centrarItemsTabla">ACCIONES</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr th:each="gruposInves : ${ListaGruposInves}">
+									
+										<td class="centrarItemsTabla" th:text="${gruposInves.grupo.id}"></td>
+										<td class="centrarItemsTabla" th:text="${gruposInves.grupo.nombre}"></td>
+										<td class="centrarItemsTabla" th:text="${gruposInves.investigador.id}"></td>
+										<td class="centrarItemsTabla" th:text="${gruposInves.investigador.nombre}"></td>
+										<td class="centrarItemsTabla" th:text="${gruposInves.estado}"></td>
+										<td class="d-flex flex-nowrap align-items-center justify-content-center">
+											<a class="btn btn-info" th:onclick="activarGruposInves([[${gruposInves}]]);" th:switch="${gruposInves.estado}">
+                                                <span th:case="'ACTUAL'">Actual</span>
+                                                <span th:case="'NO ACTUAL'">No actual</span>
+											</a>
+										</td>
+									</tr>
+								</tbody>
+							</table> 
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div th:replace="fragments/footer"></div>
+	<div th:include="admin/gruposInves/save.html"></div>
+</body>
+
+
+
+<script th:inline="javascript">
+
+
+	let modalGrupo = document.getElementById("agregarGruposInvesModal");
+	let span = document.getElementsByClassName("closeModalGruposInves")[0];
+	let body = document.getElementsByTagName("body")[0];
+
+	function imprimir (gruposInves){
+		console.log(gruposInves)
+	}
+	
+	
+	
+	$(document).ready(function() {
+		
+		estilosBotones();
+		
+		
+	    $("#tabla_GruposInves_CRUD").DataTable({
+	        "language": {
+	            "lengthMenu": "Mostrar _MENU_ registros por página",
+	            "zeroRecords": "No se encontraron coincidencias",
+	            "info": "Página _PAGE_ de _PAGES_",
+	            "infoEmpty": "No se encontraron registros",
+	            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+	            "paginate": {
+	                "previous": "Página anterior"
+	            }
+	        }
+	    });
+		
+	    $('#btnCrearGruposInves').on('click', function(e) {
+	    	modalGrupo.style.display = "block";
+	        body.style.position = "static";
+	        body.style.height = "100%";
+	        body.style.overflow = "hidden";
+	        $('#idTitleCrearGruposInves').text('Crear relacion grupo investigador');
+// 	        $('#campoid').val("-1");
+	
+	    });
+	
+	
+	    $('.closeModalGruposInves').on('click', function(e) {
+	    	modalGrupo.style.display = "none";
+	        body.style.position = "inherit";
+	        body.style.height = "auto";
+	        body.style.overflow = "visible";
+	    })
+	
+	    window.onclick = function(event) {
+	        if (event.target == modalGrupo) {
+	        	modalGrupo.style.display = "none";
+	            body.style.position = "inherit";
+	            body.style.height = "auto";
+	            body.style.overflow = "visible";
+	        }
+	    }
+	    
+	    // al hacer click en el boton del modal guardar
+	    $('#BtnGuardarInvesGrupo').click(function() {
+	        let variables = $('.requaired');
+	        var contador = variables.length;
+	        for (var i = 0; i < variables.length; i++) {
+	            if ($(variables[i]).val() == '' || $(variables[i]).val() == undefined) {
+	                $(variables[i]).addClass('requerido');
+	                contador = contador - 1;
+	            } else {
+	                $(variables[i]).removeClass('requerido');
+	            }
+	        }
+	        if (contador != variables.length) {
+	            Swal.fire({
+	                title: '¡Error!',
+	                text: "Existen campos obligatorios que no se han registrado",
+	                icon: 'error',
+	                confirmButtonText: 'Aceptar',
+	                allowOutsideClick: () => false
+	            })
+	            return false;
+	        }	
+	    });
+	    
+	    
+	    $('#guardarGruposInvesModal').on('submit', function(e) {
+	    	
+	        e.preventDefault();
+	        let data = $(this).serialize();
+	        let subdata = data.split(/[&,=]+/);
+	        $.ajax({
+	            type: "POST",
+	            url: "gruposInves/save/" + subdata[1] + "/" +subdata[3] ,
+	            data: data,
+	            beforeSend: function() {
+	                Swal.fire({
+	                    title: 'Cargando...',
+	                    allowOutsideClick: () => !Swal.isLoading(),
+	                    onBeforeOpen: () => {
+	                        Swal.showLoading();
+	                    }
+	                });
+	            },
+	            success: function(response) {
+	                Swal.close();
+	                if (response.codigoRespuesta === 200) {
+	                    Swal.fire({
+	                        icon: 'success',
+	                        title: response.mensajeRespuesta,
+	                    }).then((value) => {
+	                        location.reload();
+	                    });
+	
+	                } else {
+	                    Swal.fire({
+	                        title: '!Información¡',
+	                        text: response.mensajeRespuesta,
+	                        icon: 'info',
+	                        confirmButtonText: 'Aceptar',
+	                        allowOutsideClick: () => false
+	                    })
+	                }
+	
+	            },
+	            error: function() {
+	                Swal.close();
+	                Swal.fire({
+	                    title: '¡Error!',
+	                    text: 'Error de conexión ',
+	                    icon: 'error',
+	                    confirmButtonText: 'Aceptar',
+	                    allowOutsideClick: () => false
+	                })
+	            }
+	        }); 
+	
+	    });
+	 
+	}); 
+	
+	function activarGruposInves(grupo) {
+		
+	    console.log(grupo)
+		Swal.fire({
+	        title: '¿Esta seguro de cambiar el estado del investigador en el grupo?',
+	        icon: 'warning',
+	        showCancelButton: true,
+	        confirmButtonColor: '#3085d6',
+	        cancelButtonColor: '#d33',
+	        confirmButtonText: '¡Si, actualizar!',
+	        cancelButtonText: 'Cancelar'
+	    }).then((result) => {
+	        if (result.value) {
+	
+	            $.ajax({
+	                    url: "gruposInves/active/"+ grupo.id.grupo+ "/" + grupo.id.investigador,
+	                    type: "GET"
+	                })
+	                .done(function(data) {
+	                    Swal.fire(
+	                        '¡Actualizado!',
+	                        'El estado del investigador ha sido actualizado.',
+	                        'success'
+	                    ).then((value) => {
+	                        location.reload();
+	                    });
+	                })
+	                .fail(function(data) {
+	                    Swal.fire({
+	                        icon: 'error',
+	                        title: 'Oops...',
+	                        text: '¡Algo salió mal!'
+	                    })
+	                })
+	        }
+	    });
+	}	
+	
+	
+</script>
+
+
+</html>

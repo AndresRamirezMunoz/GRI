@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="fragments/header :: header('Investigadores')">
+<meta charset="utf-8" />
+</head>
+
+<body id="page-top" class="sidebar-toggled">
+    <nav th:replace="fragments/nav :: nav('card-0-nav')"></nav>
+    <nav th:replace="fragments/secondarynav"></nav>
+
+    <div id="wrapper">
+        <div id="content-wrapper">
+            <div class="container-fluid">
+                <div class="region-hero">
+                    <div class="contenedor-hero">
+                        <div class="contenido-hero">
+                            <h1 class="titulo-hero">Investigadores</h1>
+                            Administración de investigadores.
+                        </div>
+                    </div>
+                </div>
+                <div class="separador-1"></div>
+                <a class="btn btn-primary" id="btnCrearInvestigador">Agregar investigador</a> <br />
+                <br />
+                <div class="contenedor mb-3">
+                    <div class="contenedor-header">
+                        <i class="fas fa-table"></i> Lista de Investigadores
+                    </div>
+                    <div class="contenedor-body">
+                        <div id="">
+                            <table id="tabla_Investigadores_CRUD" th:class="'table-' + ${id} + ' table-striped table-bordered table-hover table-responsive-lg'" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th class="centrarItemsTabla">CÓDIGO INVESTIGADOR</th>
+                                        <th class="centrarItemsTabla">NOMBRE</th>
+                                        <th class="centrarItemsTabla">NIVEL ACADEMICO</th>
+                                        <th class="centrarItemsTabla">CATEGORÍA</th>
+                                        <th class="centrarItemsTabla">PERTENENCIA</th>
+                                        <th class="centrarItemsTabla">SEXO</th>
+                                        <th class="centrarItemsTabla">ACCIONES</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="investigador : ${listaInvestigadores}" th:if="${investigador.id}>0" th:id="'trinvestigador'+${investigador.id}">
+                                        <td class="centrarItemsTabla" th:text="${investigador.id}"></td>
+                                        <td class="centrarItemsTabla" th:text="${investigador.nombre}"></td>
+                                        <td class="centrarItemsTabla" th:text="${investigador.nivelAcademico}"></td>
+                                        <td class="centrarItemsTabla" th:text="${investigador.categoria}"></td>
+                                        <td class="centrarItemsTabla" th:switch="${investigador.pertenencia}"><span th:case="null">NO TIENE</span>
+                                            <div th:case="*">
+                                                <div th:text="${investigador.pertenencia}" />
+                                            </div>
+                                        </td>
+                                        <td class="centrarItemsTabla" th:text="${investigador.sexo}"></td>
+                                        <td class="d-flex flex-nowrap align-items-center justify-content-center">
+                                            <a class="btn btn-info mr-2" th:onclick="editarInvestigador([[${investigador}]]);">Editar</a>
+                                            <a class="btn btn-danger btnEliminar" th:onclick="activarInvestigador([[${investigador}]]);" th:switch="${investigador.activo}">
+                                                <span th:case="true">Activo</span>
+                                                <span th:case="false">Inactivo</span>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="fragments/footer"></div>
+    <div th:include="admin/investigadores/save.html"></div>
+</body>
+
+<script th:inline="javascript">
+	var data = [[${ investigadores }]];
+
+	let modalInvestigador = document.getElementById("agregarInvestigadoresModal");
+	let span = document.getElementsByClassName("closeModalInvestigador")[0];
+	let body = document.getElementsByTagName("body")[0];
+	//	Documento listo
+	let idInvestigador = 0;
+	$(document).ready(function() {
+	    estilosBotones();
+	
+	    $('#id').on('change', function() {
+	    	idInvestigador = this.value;
+	    });
+	 	    
+	    $("#tabla_Investigadores_CRUD").DataTable({
+	        "language": {
+	            "lengthMenu": "Mostrar _MENU_ registros por página",
+	            "zeroRecords": "No se encontraron coincidencias",
+	            "info": "Página _PAGE_ de _PAGES_",
+	            "infoEmpty": "No se encontraron registros",
+	            "infoFiltered": "(filtrado de _MAX_ registros totales)",
+	            "paginate": {
+	                "previous": "Página anterior"
+	            }
+	        }
+	    });
+	
+	    $('#btnCrearInvestigador').on('click', function(e) {
+	
+	        modalInvestigador.style.display = "block";
+	
+	        body.style.position = "static";
+	        body.style.height = "100%";
+	        body.style.overflow = "hidden";
+	
+	        $('#idTitleCrearInvestigador').text('Crear Investigador');
+	        limpiarCampos();
+	        $('#campoid').val("-1");
+	
+	    });
+
+	    $('.closeModalInvestigador').on('click', function(e) {
+	        modalInvestigador.style.display = "none";
+	        body.style.position = "inherit";
+	        body.style.height = "auto";
+	        body.style.overflow = "visible";
+	    })
+	
+	    window.onclick = function(event) {
+	        if (event.target == modalInvestigador) {
+	            modalInvestigador.style.display = "none";
+	            body.style.position = "inherit";
+	            body.style.height = "auto";
+	            body.style.overflow = "visible";
+	        }
+	    }
+	
+	    // al hacer click en el boton del modal guardar
+	    $('#BtnGuardarInvestigador').click(function() {
+	        let variables = $('.requaired');
+	        var contador = variables.length;
+	        for (var i = 0; i < variables.length; i++) {
+	            if ($(variables[i]).val() == '' || $(variables[i]).val() == undefined) {
+	                $(variables[i]).addClass('requerido');
+	                contador = contador - 1;
+	            } else {
+	                $(variables[i]).removeClass('requerido');
+	            }
+	        }
+	        if (contador != variables.length) {
+	            Swal.fire({
+	                title: '¡Error!',
+	                text: "Existen campos obligatorios que no se han registrado",
+	                icon: 'error',
+	                confirmButtonText: 'Aceptar',
+	                allowOutsideClick: () => false
+	            })
+	            return false;
+	        }	
+	    });	
+	});
+	
+	
+	function limpiarCampos() {
+	    $('.inputInvestigadores').val("");
+	}
+	
+	function editarInvestigador(Investigador) {
+	
+	    limpiarCampos();
+		console.log(Investigador)
+	    idInvestigador = Investigador.id;
+	    $('#id').val(Investigador.id);
+	    $('#nombre').val(Investigador.nombre);
+	    $('#nivelAcademico').val(Investigador.nivelAcademico);
+	    $('#categoria').val(Investigador.categoria);
+	    $('#pertenencia').val(Investigador.pertenencia);
+	    $('#sexo').val(Investigador.sexo);
+	    $('#thumbnail').attr("src", "img/investigador/"+Investigador.foto);
+	    
+	    
+	
+	    modalInvestigador.style.display = "block";
+	    body.style.position = "static";
+	    body.style.height = "100%";
+	    body.style.overflow = "hidden";
+	
+	    $('#idTitleCrearInvestigador').text('Editar Investigador');	
+	}
+	
+	function activarInvestigador(Investigador) {
+	    Swal.fire({
+	        title: '¿Esta seguro de cambiar el estado al Investigador seleccionado?',
+	        icon: 'warning',
+	        showCancelButton: true,
+	        confirmButtonColor: '#3085d6',
+	        cancelButtonColor: '#d33',
+	        confirmButtonText: '¡Si, actualizar!',
+	        cancelButtonText: 'Cancelar'
+	    }).then((result) => {
+	        if (result.value) {
+	
+	            $.ajax({
+	                    url: `Investigadores/active/${Investigador.id}`,
+	                    type: "GET"
+	                })
+	                .done(function(data) {
+	                    Swal.fire(
+	                        '¡Actualizado!',
+	                        'El Investigador ha sido actualizado.',
+	                        'success'
+	                    ).then((value) => {
+	                        location.reload();
+	                    });
+	                })
+	                .fail(function(data) {
+	                    Swal.fire({
+	                        icon: 'error',
+	                        title: 'Oops...',
+	                        text: '¡Algo salió mal!'
+	                    })
+	                })
+	        }
+	    });
+	}				
+</script>
+
+
+</html>
