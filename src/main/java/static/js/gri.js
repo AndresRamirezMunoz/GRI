@@ -1,8 +1,5 @@
 (function ($) {
 	$(document).ready(function () {
-		
-		
-		
 
 		// Ampliar/Reducir la barra lateral
 		$("#sidebarToggle").on('click', function (e) {
@@ -315,8 +312,7 @@
 			columns: [
 				{ data: "id", visible: false },
 				{ data: "nombre" },
-				{ data: "facultad" },
-				{ data: "activo" }
+				{ data: "facultad" }
 			]
 		});
 
@@ -402,8 +398,7 @@
 			"order": [[1, "asc"]],
 			columns: [
 				{ data: "id", visible: false },
-				{ data: "nombre" },
-				{ data: "activo" }
+				{ data: "nombre" }
 			]
 		});
 
@@ -428,8 +423,7 @@
 			columns: [
 				{ data: "id", "visible": false },
 				{ data: "nombre" },
-				{ data: "facultad.nombre" },
-				{ data: "activo" }
+				{ data: "facultad.nombre" }
 			]
 		});
 
@@ -458,8 +452,7 @@
 				{ data: "centro.nombre" },
 				{ data: "nombre" },
 				{ data: "lider" },
-				{ data: "categoria" },
-				{ data: "activo" }
+				{ data: "categoria" }
 			]
 		});
 
@@ -877,5 +870,3 @@ function estilosBotones() {
 	$(".btn").addClass("text-white");
 	$(".btn").css("text-shadow", "none")
 }
-
-

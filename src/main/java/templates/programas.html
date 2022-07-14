@@ -32,7 +32,6 @@
 								<th></th>
 								<th>NOMBRE</th>
 								<th>FACULTAD</th>
-								<th>ACTIVO</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -40,10 +39,6 @@
 								<td th:text="${programa.id}"></td>
 								<td th:text="${programa.nombre}"></td>
 								<td th:text="${programa.facultad.nombre}"></td>
-								<td ><a th:switch="${programa.activo}">
-                                                <span th:case="true">Activo</span>
-                                                <span th:case="false">Inactivo</span>
-                                            </a></td>
 							</tr>
 						</tbody>
 					</table>

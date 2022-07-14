@@ -51,10 +51,6 @@ public class Programa implements Serializable {
 	@Column(name = "CONTACTO")
 	private String contacto;
 
-	/** The activo */
-	@Column(name = "ACTIVO")
-	private boolean activo;
-
 	/** The facultad. */
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "FACULTADES_ID")
@@ -150,24 +146,6 @@ public class Programa implements Serializable {
 	 */
 	public String getContacto() {
 		return contacto;
-	}
-
-	/**
-	 * Sets the activo.
-	 *
-	 * @param categoria the new activo
-	 */
-	public boolean isActivo() {
-		return activo;
-	}
-
-	/**
-	 * Sets the activo.
-	 *
-	 * @param activo the new activo
-	 */
-	public void setActivo(boolean activo) {
-		this.activo = activo;
 	}
 
 	/**

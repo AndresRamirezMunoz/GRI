@@ -39,6 +39,8 @@ public class Centro implements Serializable {
 	@Column(name="INFORMACIONGENERAL")
 	private String informaciongeneral;
 	
+
+
 	/** the contacto */
 	@Column(name = "CONTACTO")
 	private String contacto;
@@ -47,10 +49,6 @@ public class Centro implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "FACULTADES_ID")
 	private Facultad facultad;
-	
-	/** The activo */
-	@Column(name = "ACTIVO")
-	private boolean activo;
 
 	/** The grupo. */
 	@OneToMany(mappedBy = "centro", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -171,24 +169,6 @@ public class Centro implements Serializable {
 		this.facultad = facultad;
 	}
 
-	/**
-	 * Sets the activo.
-	 *
-	 * @param categoria the new activo
-	 */
-	public boolean isActivo() {
-		return activo;
-	}
-
-	/**
-	 * Sets the activo.
-	 *
-	 * @param activo the new activo
-	 */
-	public void setActivo(boolean activo) {
-		this.activo = activo;
-	}
-	
 	/**
 	 * Gets the grupo.
 	 *

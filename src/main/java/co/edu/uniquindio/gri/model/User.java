@@ -42,10 +42,6 @@ public class User implements Serializable{
 	@ManyToOne()
 	@JoinColumn(name = "USER_ROLE_ID")
 	private Rol rol;
-	
-	/** The activo */
-	@Column(name = "ACTIVO")
-	private boolean activo;
 
 	/**
 	 * Instantiates a new user.
@@ -156,22 +152,5 @@ public class User implements Serializable{
 		this.rol = rol;
 	}
 
-	/**
-	 * Sets the activo.
-	 *
-	 * @param categoria the new activo
-	 */
-	public boolean isActivo() {
-		return activo;
-	}
-
-	/**
-	 * Sets the activo.
-	 *
-	 * @param activo the new activo
-	 */
-	public void setActivo(boolean activo) {
-		this.activo = activo;
-	}
 	
 }

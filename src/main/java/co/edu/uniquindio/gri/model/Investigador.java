@@ -2,7 +2,6 @@ package co.edu.uniquindio.gri.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -49,9 +48,6 @@ public class Investigador implements Serializable {
 	private String pertenencia;
 	@Column(name = "SEXO", length = 50)
 	private String sexo;
-	
-	@Column(name = "FOTO", length = 50)
-	private String foto;
 
 	/** The idiomas. */
 	@OneToMany(mappedBy = "investigador", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -76,10 +72,6 @@ public class Investigador implements Serializable {
 	/** The grupos. */
 	@OneToMany(mappedBy = "investigadores", cascade = CascadeType.ALL)
 	private List<GruposInves> grupos = new ArrayList<GruposInves>();
-	
-	/** The activo */
-	@Column(name = "ACTIVO")
-	private boolean activo;
 
 	/**
 	 * Instantiates a new investigador.
@@ -106,26 +98,6 @@ public class Investigador implements Serializable {
 		this.produccionesBibliograficas = produccionesBibliograficas;
 
 	}
-	
-	/**
-	 * Instantiates a new investigador.
-	 * 
-	 * @param id			 the id
-	 * @param nombre         the nombre
-	 * @param categoria      the categoria
-	 * @param nivelAcademico the nivel academico
-	 * @param pertenencia    the pertenencia
-	 * @param grupos
-	 */
-	public Investigador(long id, String nombre, String categoria, String nivelAcademico, String pertenencia, String sexo, Collection<GruposInves> grupos) {
-		this.id = id;
-		this.nombre = nombre;
-		this.categoria = categoria;
-		this.nivelAcademico = nivelAcademico;
-		this.pertenencia = pertenencia;
-		this.sexo = sexo;
-		this.grupos = (List<GruposInves>) grupos;
-	}
 
 	/**
 	 * Instantiates a new investigador.
@@ -136,7 +108,7 @@ public class Investigador implements Serializable {
 	 * @param nivelAcademico the nivel academico
 	 * @param pertenencia    the pertenencia
 	 */
-	public Investigador(long id, String nombre, String categoria, String nivelAcademico, String pertenencia,String sexo, boolean activo, String foto) {
+	public Investigador(long id, String nombre, String categoria, String nivelAcademico, String pertenencia,String sexo) {
 		this.id = id;
 		this.nombre = nombre;
 		this.categoria = categoria;
@@ -144,8 +116,6 @@ public class Investigador implements Serializable {
 		this.nivelAcademico = nivelAcademico;
 		this.pertenencia = pertenencia;
 		this.sexo=sexo;
-		this.activo=activo;
-		this.foto=foto;
 	}
 
 	/**
@@ -232,23 +202,6 @@ public class Investigador implements Serializable {
 	 */
 	public void setNivelAcademico(String nivelAcademico) {
 		this.nivelAcademico = nivelAcademico;
-	}
-
-	public boolean isActivo() {
-		return activo;
-	}
-
-	public void setActivo(boolean activo) {
-		this.activo = activo;
-	}
-
-	
-	public String getFoto() {
-		return foto;
-	}
-
-	public void setFoto(String foto) {
-		this.foto = foto;
 	}
 
 	/**
@@ -399,10 +352,4 @@ public class Investigador implements Serializable {
         return id == other.id;
     }
 
-	@Override
-	public String toString() {
-		return "Investigador [id=" + id + ", nombre=" + nombre + "]";
-	}
-	
-	
 }

@@ -3,29 +3,22 @@ package co.edu.uniquindio.gri.dao;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
-import co.edu.uniquindio.gri.CrudRepository.InvestigadorCrudRepository;
 import co.edu.uniquindio.gri.model.Investigador;
 import co.edu.uniquindio.gri.model.LiderGrupo;
 import co.edu.uniquindio.gri.repository.InvestigadorRepository;
 import co.edu.uniquindio.gri.repository.LiderGrupoRepository;
-import co.edu.uniquindio.gri.service.api.InvestigadorServiceApi;
-import co.edu.uniquindio.gri.utilities.GenericServiceImpl;
 
 /**
  * Clase InvestigadorDAO.
  */
 @Service
-public class InvestigadorDAO extends GenericServiceImpl<Investigador, Long> implements InvestigadorServiceApi{
+public class InvestigadorDAO {
 
 	/** Repository para investigadores. */
 	@Autowired
 	InvestigadorRepository investigadorRepository;
-	
-	@Autowired
-	InvestigadorCrudRepository investigadoroCrudRepository;
 	
 	@Autowired 
 	LiderGrupoRepository liderGrupoRepository;
@@ -636,18 +629,5 @@ public class InvestigadorDAO extends GenericServiceImpl<Investigador, Long> impl
 	public List<Investigador> getAllInvestigadoresInternosPrograma(Long programaId) {
 		return investigadorRepository.getInvestigadoresInternosPrograma(programaId);
 	}
-
-	@Override
-	public CrudRepository<Investigador, Long> getCrudRepository() {
-		return investigadoroCrudRepository;
-	}
 	
-	/**
-	 * Obtiene todos los investigadores
-	 * 
-	 * @return lista de investigadores
-	 */
-//	public List<Investigador> getAllInvestigadores() {
-//		return investigadorRepository.findAll();
-//	}
 }

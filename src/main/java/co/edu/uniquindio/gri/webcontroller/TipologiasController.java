@@ -157,8 +157,7 @@ public class TipologiasController {
 		model.addAttribute("nombre", datos[0]);
 		model.addAttribute("color", datos[1]);
 		model.addAttribute("facultadId", datos[2]);
-		model.addAttribute("image", "567574");
-		
+
 		if (type.equals("i")) {
 			Investigador inv = investigadorDAO.findOne(Long.parseLong(id));
 
