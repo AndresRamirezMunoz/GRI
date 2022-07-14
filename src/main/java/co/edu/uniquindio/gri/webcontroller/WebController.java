@@ -3,7 +3,6 @@ package co.edu.uniquindio.gri.webcontroller;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Array;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -21,10 +20,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import co.edu.uniquindio.gri.dao.CasoRevisionProduccionDAO;
 import co.edu.uniquindio.gri.dao.CentroDAO;
@@ -97,17 +98,15 @@ public class WebController {
 
 	@Autowired
 	ReconocimientosDAO reconocimientosDAO;
-	
+
 	@Autowired
 	CasoRevisionProduccionDAO casosRevisionProduccionDAO;
 
 	@Autowired
 	Util utilidades = new Util();
-	
+
 	@Autowired
 	GruposInvesDAO gruposInvesDAO;
-	
-	
 
 	@GetMapping(value = { "/", "inicio" })
 	public String main(Model model) {
@@ -119,12 +118,10 @@ public class WebController {
 		model.addAttribute(Util.CANTIDAD_GRUPOS, stats.get(Util.CANTIDAD_GRUPOS_ID));
 		model.addAttribute(Util.CANTIDAD_INVESTIGADORES, stats.get(Util.CANTIDAD_INVESTIGADORES_ID));
 		model.addAttribute(Util.ESTATICA_ESTADISTICAS, "");
-		
+
 		return "index";
-		
+
 	}
-	
-	
 
 	@GetMapping("/login")
 	public String getLogin(Model model) {
@@ -143,26 +140,23 @@ public class WebController {
 	public String getAllGruposInves(Model model) {
 		model.addAttribute("id", 0);
 		model.addAttribute("ListaGruposInves", gruposInvesDAO.findAll());
-		
+
 		model.addAttribute("listaInvestigadores", investigadorDAO.findAll());
 		model.addAttribute("listaGrupos", grupoDAO.findAll());
-		
+
 		List<Grupo> grupo = new ArrayList<>();
 		List<Investigador> investigador = new ArrayList<>();
-		
+
 		model.addAttribute("grupo", grupo);
 		model.addAttribute("investigador", investigador);
-		
-		
+
 		return "admin/gruposInves/gruposInves";
 	}
-	
-	
+
 	@GetMapping("/Adminvestigadores")
 	public String getAllInvestigadores(Model model) {
 		// model.addAttribute("titulo", "Grupos");
 		model.addAttribute("id", 0);
-		model.addAttribute("ruta", System.getProperty("user.home")+"\\Pictures\\");
 
 		List<Grupo> grupo = new ArrayList<>();
 		model.addAttribute("grupo", grupo);
@@ -173,7 +167,7 @@ public class WebController {
 
 		return "admin/investigadores/investigadores";
 	}
-	
+
 	@GetMapping("/investigadoresP")
 	public String getInvestigadoresPertenencia(
 			@RequestParam(name = "type", required = false, defaultValue = "u") String type,
@@ -674,42 +668,31 @@ public class WebController {
 
 		return "investigadores";
 	}
-	
-	@PostMapping("Investigadores/save/{idInvestigador}")
-	public @ResponseBody Respuesta saveInvestigadores(Investigador investigador, @PathVariable("idInvestigador") Long idInvestigador) {
 
-		Respuesta respuesta = new Respuesta();
+	@PostMapping("Investigadores/save")
+	public String saveInvestigadores(@ModelAttribute(name = "investigador") Investigador investigador,
+			@RequestParam("fileImage") MultipartFile multipartFile) throws IOException {
+
 		if (investigador != null) {
 
-			Investigador consulta = investigadorDAO.findOne(investigador.getId());
-			
-			Investigador peticion = new Investigador();
-			peticion.setId(investigador.getId());
-			peticion.setNombre(investigador.getNombre());
-			peticion.setNivelAcademico(investigador.getNivelAcademico());
-			peticion.setCategoria(investigador.getCategoria());
-			peticion.setPertenencia(investigador.getPertenencia());
-			peticion.setSexo(investigador.getSexo());
-//			peticion.setActivo(true);
+			Investigador investigadorUpdate = investigadorDAO.findOne(investigador.getId());
+			/*
+			 * investigadorUpdate.setId(investigador.getId());
+			 * investigadorUpdate.setNombre(investigador.getNombre());
+			 * investigadorUpdate.setNivelAcademico(investigador.getNivelAcademico());
+			 * investigadorUpdate.setCategoria(investigador.getCategoria());
+			 * investigadorUpdate.setPertenencia(investigador.getPertenencia());
+			 * investigadorUpdate.setSexo(investigador.getSexo());
+			 * peticion.setActivo(true);
+			 */
+			investigadorUpdate.setFoto(investigador.getId() + ".jpg");
+			investigadorDAO.save(investigadorUpdate);
+			Util.saveFile(Util.DIRECTORIO_IMAGENES_INVESTIGADOR_LOCAL, investigadorUpdate.getFoto(), multipartFile);
 
-			if (consulta == null) {
-
-				// guardar
-				Util util = new Util();
-				investigadorDAO.save(peticion);
-				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
-				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_CREAR_CENTRO_CORRECTO);
-			} else {
-
-				// actualizar
-				investigadorDAO.save(peticion);
-				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
-				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_MODIFICAR_CENTRO_CORRECTO);
-			}
-		}	
-		return respuesta;
+		}
+		return "redirect:/Adminvestigadores";
 	}
-	
+
 	@GetMapping("/programas")
 	public String getProgramas(
 			@RequestParam(name = Util.PARAM_TYPE, required = false, defaultValue = Util.UNIVERSITY_PARAM_ID) String type,
@@ -778,7 +761,7 @@ public class WebController {
 		}
 		return "centros";
 	}
-	
+
 	@GetMapping("/Admgrupos")
 	public String getAllGrupos(Model model) {
 		// model.addAttribute("titulo", "Grupos");
@@ -791,17 +774,16 @@ public class WebController {
 
 		model.addAttribute("programa", programa);
 		model.addAttribute("programas", programaDAO.getAll());
-		
+
 		model.addAttribute("listaGrupos", grupoDAO.findAll());
 
 		return "admin/grupos/grupos";
 	}
-	
+
 	@PostMapping("grupos/save/{idCentro}/{idPrograma}")
 	public @ResponseBody Respuesta saveGrupo(Grupo grupo, @PathVariable("idCentro") Long idCentro,
 			@PathVariable("idPrograma") Long idPrograma) {
 
-		
 		Respuesta respuesta = new Respuesta();
 
 		if (grupo != null) {
@@ -839,70 +821,66 @@ public class WebController {
 				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
 				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_MODIFICAR_CENTRO_CORRECTO);
 			}
-		}	
+		}
 		return respuesta;
 	}
-	
+
 	@GetMapping("gruposInves/active/{idGrupo}/{idInvestigador}")
-	public String activeGruposInves(@PathVariable("idGrupo") Long idGrupo, @PathVariable("idInvestigador") Long idInvestigador) {
-		
+	public String activeGruposInves(@PathVariable("idGrupo") Long idGrupo,
+			@PathVariable("idInvestigador") Long idInvestigador) {
+
 		CompositeKey id = new CompositeKey(idGrupo, idInvestigador);
-		
+
 		GruposInves gruposInves = gruposInvesDAO.findOne(id);
-		gruposInves.setEstado(gruposInves.getEstado().equals("ACTUAL")?"NO ACTUAL":"ACTUAL");
+		gruposInves.setEstado(gruposInves.getEstado().equals("ACTUAL") ? "NO ACTUAL" : "ACTUAL");
 		gruposInvesDAO.save(gruposInves);
 
 		return "redirect:/AdmGruposInves";
 	}
-	
-	
-	
+
 	@PostMapping("gruposInves/save/{idGrupo}/{idInvestigador}")
-	public @ResponseBody Respuesta crearGruposInves(@PathVariable("idGrupo") Long idGrupo, @PathVariable("idInvestigador") Long idInvestigador) {
-		
+	public @ResponseBody Respuesta crearGruposInves(@PathVariable("idGrupo") Long idGrupo,
+			@PathVariable("idInvestigador") Long idInvestigador) {
+
 		CompositeKey id = new CompositeKey(idGrupo, idInvestigador);
-		
+
 		Respuesta respuesta = new Respuesta();
-		GruposInves consulta= gruposInvesDAO.findOne(id);
-		
-		if (consulta==null) {
+		GruposInves consulta = gruposInvesDAO.findOne(id);
+
+		if (consulta == null) {
 			Investigador investigador = investigadorDAO.findOne(idInvestigador);
 			Grupo grupo = grupoDAO.findOne(idGrupo);
 			GruposInves gruposInves = new GruposInves(grupo, investigador, "ACTUAL");
 			gruposInvesDAO.save(gruposInves);
 			respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
 			respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_CREAR_GRUPO_INVESTIGADOR_CORRECTO);
-		}else {
+		} else {
 			respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_ERROR);
 			respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_GRUPO_INVESTIGADOR_ERROR);
 		}
-		
+
 		return respuesta;
 	}
-	
+
 	@GetMapping("grupos/active/{id}")
 	public String activeGrupo(@PathVariable("id") Long id) {
 
-		
 		Grupo grupo = grupoDAO.findOne(id);
 		grupo.setActivo(!grupo.isActivo());
 		grupoDAO.save(grupo);
 
 		return "redirect:/Admgrupos";
 	}
-	
+
 	@GetMapping("Investigadores/active/{id}")
 	public String activeInvestigador(@PathVariable("id") Long id) {
 
-		
 		Investigador investigador = investigadorDAO.findOne(id);
 		investigador.setActivo(!investigador.isActivo());
 		investigadorDAO.save(investigador);
 
 		return "redirect:/Admgrupos";
 	}
-	
-
 
 	@GetMapping("/grupos")
 	public String getGrupos(
@@ -1016,11 +994,11 @@ public class WebController {
 				break;
 			}
 		}
-		
+
 		List<Grupo> grupos = new ArrayList<Grupo>();
-		
+
 		grupos = grupoDAO.findAll();
-		
+
 		Map<String, Integer> categoriaGrupos = new HashMap<>();
 
 		int[] cantidades = utilidades.obtenerCantidadCategoriasGrupos(grupos);
@@ -1034,7 +1012,7 @@ public class WebController {
 
 		model.addAttribute("dataCategoriaGrupos", categoriaGrupos.values());
 		model.addAttribute("clavesCategoriaGrupos", categoriaGrupos.keySet());
-		
+
 		return "grupos";
 	}
 
@@ -1118,7 +1096,7 @@ public class WebController {
 
 		return "reconocimientos";
 	}
-	
+
 	@GetMapping("/recolecciones")
 	public String getRecoleccion(
 			@RequestParam(name = Util.PARAM_TYPE, required = false, defaultValue = Util.UNIVERSITY_PARAM_ID) String type,
@@ -1131,16 +1109,16 @@ public class WebController {
 
 		ArrayList<String> nombres = new ArrayList<String>();
 		ArrayList<Integer> indices = new ArrayList<Integer>();
-		List <ProduccionBGrupo> produccionesb = utilidades.obtenerBibliograficas(type, Long.parseLong(id));
-		List <ProduccionGrupo> producciones = utilidades.obtenerGenericas(type, Long.parseLong(id));
+		List<ProduccionBGrupo> produccionesb = utilidades.obtenerBibliograficas(type, Long.parseLong(id));
+		List<ProduccionGrupo> producciones = utilidades.obtenerGenericas(type, Long.parseLong(id));
 		List<CasoRevisionProduccion> casos = casosRevisionProduccionDAO.getRecolecciones();
-		
-		List<CasoRevisionProduccion> casosResult = utilidades.obtenerNombresNumerosCasosPorListas(casos, produccionesb, producciones, indices, nombres);
-		
+
+		List<CasoRevisionProduccion> casosResult = utilidades.obtenerNombresNumerosCasosPorListas(casos, produccionesb,
+				producciones, indices, nombres);
+
 		model.addAttribute("nombres", nombres);
 		model.addAttribute("indices", indices);
 		model.addAttribute("recolecciones", casosResult);
-		
 
 		long facultadId = 0;
 		long longId = Long.parseLong(id);
@@ -1382,22 +1360,21 @@ public class WebController {
 					respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
 					respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_CREAR_USUARIO_CORRECTO);
 
-				}else {
-					
+				} else {
+
 					respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_ERROR);
 					respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_CREAR_USUARIO_ERROR_YA_EXISTE);
 
-					
 				}
-			}else {
-				
-				if(consulta==null) {
-					
+			} else {
+
+				if (consulta == null) {
+
 					respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_ERROR);
 					respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_MODIFICAR_USUARIO_ERROR_NO_EXISTE);
 
-				}else {
-					
+				} else {
+
 					consulta.setRol(user.getRol());
 					consulta.setUsername(user.getUsername());
 					consulta.setPassword(utilidades.encodePassword(user.getPassword()));
@@ -1406,13 +1383,13 @@ public class WebController {
 					respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_MODIFICAR_USUARIO_CORRECTO);
 
 				}
-				
+
 			}
 		}
 
 		return respuesta;
 	}
-	
+
 	@GetMapping("usuario/active/{username}")
 	public String activepFacultad(@PathVariable("username") String username) {
 
@@ -1422,7 +1399,6 @@ public class WebController {
 
 		return "redirect:/usuarios";
 	}
-	
 
 	@GetMapping("usuarios/delete/{id}")
 	public String deleteUsuario(@PathVariable("id") Long id, Model model) {
@@ -1444,22 +1420,22 @@ public class WebController {
 		return "admin/centros/centros";
 
 	}
-	
+
 	@PostMapping("centros/save/{idFacultad}")
 	public @ResponseBody Respuesta saveCentro(Centro centro, @PathVariable("idFacultad") Long idFacultad) {
 
 		Respuesta respuesta = new Respuesta();
 
 		if (centro != null) {
-			
-			Centro consulta = centroDAO.findOne(centro.getId());	
+
+			Centro consulta = centroDAO.findOne(centro.getId());
 
 			Centro ultimo = centroDAO.findLastRegister();
-			
-			if(consulta == null) {
-				
-				//guardar
-				
+
+			if (consulta == null) {
+
+				// guardar
+
 				Facultad facultadAsociada = facultadDAO.findOne(idFacultad);
 
 				Centro peticion = new Centro();
@@ -1473,19 +1449,19 @@ public class WebController {
 				centroDAO.save(peticion);
 				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
 				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_CREAR_CENTRO_CORRECTO);
-			}else {
-				
-				//actualizar
-				
+			} else {
+
+				// actualizar
+
 				Facultad facultadAsociada = facultadDAO.findOne(idFacultad);
-				
+
 				consulta.setNombre(centro.getNombre());
 				consulta.setInformaciongeneral(centro.getInformaciongeneral());
 				consulta.setContacto(centro.getContacto());
 				consulta.setFacultad(facultadAsociada);
 
 				centroDAO.save(consulta);
-				
+
 				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
 				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_MODIFICAR_CENTRO_CORRECTO);
 			}
@@ -1493,6 +1469,7 @@ public class WebController {
 
 		return respuesta;
 	}
+
 	@GetMapping("centro/active/{id}")
 	public String activeCentro(@PathVariable("id") Long id) {
 
@@ -1502,13 +1479,14 @@ public class WebController {
 
 		return "redirect:/Admcentros";
 	}
-	
+
 	@GetMapping("centros/delete/{id}")
 	public String deleteCentro(@PathVariable("id") Long id, Model model) {
 
 		centroDAO.delete(id);
-		
-		//esto en realidad no hace nada, la actualizacion de la pagina se esta dando con location.reaload() -> javascript
+
+		// esto en realidad no hace nada, la actualizacion de la pagina se esta dando
+		// con location.reaload() -> javascript
 		return "redirect:/Admcentros";
 	}
 
@@ -1523,21 +1501,21 @@ public class WebController {
 		return "admin/facultades/facultades";
 
 	}
-	
+
 	@PostMapping("facultades/save")
 	public @ResponseBody Respuesta saveFacultad(Facultad facultad) {
 
 		Respuesta respuesta = new Respuesta();
 
 		if (facultad != null) {
-			
-			Facultad consulta = facultadDAO.findOne(facultad.getId());	
+
+			Facultad consulta = facultadDAO.findOne(facultad.getId());
 
 			Facultad ultimo = facultadDAO.findLastRegister();
-			
-			if(consulta == null) {
-				
-				//guardar
+
+			if (consulta == null) {
+
+				// guardar
 
 				Facultad peticion = new Facultad();
 				peticion.setNombre(facultad.getNombre());
@@ -1550,10 +1528,10 @@ public class WebController {
 				facultadDAO.save(peticion);
 				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
 				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_CREAR_FACULTAD_CORRECTO);
-			}else {
-				
-				//actualizar
-				
+			} else {
+
+				// actualizar
+
 				consulta.setNombre(facultad.getNombre());
 				consulta.setMision(facultad.getMision());
 				consulta.setVision(facultad.getVision());
@@ -1567,7 +1545,7 @@ public class WebController {
 
 		return respuesta;
 	}
-	
+
 	@GetMapping("facultad/active/{id}")
 	public String activeFacultad(@PathVariable("id") Long id) {
 
@@ -1577,13 +1555,14 @@ public class WebController {
 
 		return "redirect:/Admfacultades";
 	}
-	
+
 	@GetMapping("facultades/delete/{id}")
 	public String deleteFacultad(@PathVariable("id") Long id, Model model) {
 
 		facultadDAO.delete(id);
-		
-		//esto en realidad no hace nada, la actualizacion de la pagina se esta dando con location.reaload() -> javascript
+
+		// esto en realidad no hace nada, la actualizacion de la pagina se esta dando
+		// con location.reaload() -> javascript
 		return "redirect:/Admfacultades";
 	}
 
@@ -1594,28 +1573,28 @@ public class WebController {
 		model.addAttribute("id", 0);
 
 		model.addAttribute("programas", programaDAO.getAll());
-		
+
 		model.addAttribute("facultades", facultadDAO.getAll());
 
 		return "admin/programas/programas";
 
 	}
-	
+
 	@PostMapping("programas/save/{idFacultad}")
 	public @ResponseBody Respuesta savePrograma(Programa programa, @PathVariable("idFacultad") Long idFacultad) {
 
 		Respuesta respuesta = new Respuesta();
 
 		if (programa != null) {
-			
-			Programa consulta = programaDAO.findOne(programa.getId());	
+
+			Programa consulta = programaDAO.findOne(programa.getId());
 
 			Programa ultimo = programaDAO.findLastRegister();
-			
-			if(consulta == null) {
-				
-				//guardar
-				
+
+			if (consulta == null) {
+
+				// guardar
+
 				Facultad facultadAsociada = facultadDAO.findOne(idFacultad);
 
 				Programa peticion = new Programa();
@@ -1631,12 +1610,12 @@ public class WebController {
 				programaDAO.save(peticion);
 				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
 				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_CREAR_PROGRAMA_CORRECTO);
-			}else {
-				
-				//actualizar
-				
+			} else {
+
+				// actualizar
+
 				Facultad facultadAsociada = facultadDAO.findOne(idFacultad);
-				
+
 				consulta.setNombre(programa.getNombre());
 				consulta.setInformaciongeneral(programa.getInformaciongeneral());
 				consulta.setMision(programa.getMision());
@@ -1645,7 +1624,7 @@ public class WebController {
 				consulta.setFacultad(facultadAsociada);
 
 				programaDAO.save(consulta);
-				
+
 				respuesta.setCodigoRespuesta(GRIConstantes.CODIGO_RESPUESTA_EXITOSO);
 				respuesta.setMensajeRespuesta(GRIConstantes.RESPUESTA_MODIFICAR_PROGRAMA_CORRECTO);
 			}
@@ -1653,7 +1632,7 @@ public class WebController {
 
 		return respuesta;
 	}
-	
+
 	@GetMapping("programa/active/{id}")
 	public String activePrograma(@PathVariable("id") Long id) {
 
@@ -1663,13 +1642,14 @@ public class WebController {
 
 		return "redirect:/Admprograma";
 	}
-	
+
 	@GetMapping("programas/delete/{id}")
 	public String deletePrograma(@PathVariable("id") Long id, Model model) {
 
 		programaDAO.delete(id);
-		
-		//esto en realidad no hace nada, la actualizacion de la pagina se esta dando con location.reaload() -> javascript
+
+		// esto en realidad no hace nada, la actualizacion de la pagina se esta dando
+		// con location.reaload() -> javascript
 		return "redirect:/Admprogramas";
 	}
 

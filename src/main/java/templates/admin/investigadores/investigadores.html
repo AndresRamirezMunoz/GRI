@@ -76,29 +76,7 @@
 
 <script th:inline="javascript">
 	var data = [[${ investigadores }]];
-	/**
-			$.extend($.fn.dataTable.defaults, {
-				
-				language: {
-					processing: "Procesamiento en curso...",
-					search: "Buscar: ",
-					lengthMenu: "Mostrando _MENU_ elementos",
-					info: "Mostrando _START_ a _END_ de _TOTAL_ elementos",
-					infoEmpty: "Mostrando 0 a 0 de 0 elementos",
-					infoFiltered: "(filtrado de _MAX_ elementos en total)",
-					infoPostFix: "",
-					loadingRecords: "Cargando resultados...",
-					zeroRecords: "No hay información para mostrar",
-					emptyTable: "No hay información para mostrar",
-					paginate: {
-						first: "Primera",
-						previous: "Anterior",
-						next: "Siguiente",
-						last: "última"
-					}
-				}
-			});
-	*/
+
 	let modalInvestigador = document.getElementById("agregarInvestigadoresModal");
 	let span = document.getElementsByClassName("closeModalInvestigador")[0];
 	let body = document.getElementsByTagName("body")[0];
@@ -109,9 +87,8 @@
 	
 	    $('#id').on('change', function() {
 	    	idInvestigador = this.value;
-	        console.log(idInvestigador)
 	    });
-	    
+	 	    
 	    $("#tabla_Investigadores_CRUD").DataTable({
 	        "language": {
 	            "lengthMenu": "Mostrar _MENU_ registros por página",
@@ -177,67 +154,13 @@
 	            })
 	            return false;
 	        }	
-	    });
-	
-	
-	    $('#guardarInvestigadoresModal').on('submit', function(e) {
-	        e.preventDefault();
-	        let data = $(this).serialize();
-	        console.log(data)
-	        $.ajax({
-	            type: "POST",
-	            url: "Investigadores/save/" + idInvestigador,
-	            data: data,
-	            beforeSend: function() {
-	                Swal.fire({
-	                    title: 'Cargando...',
-	                    allowOutsideClick: () => !Swal.isLoading(),
-	                    onBeforeOpen: () => {
-	                        Swal.showLoading();
-	                    }
-	                });
-	            },
-	            success: function(response) {
-	                Swal.close();
-	                if (response.codigoRespuesta === 200) {
-	                    Swal.fire({
-	                        icon: 'success',
-	                        title: response.mensajeRespuesta,
-	                    }).then((value) => {
-	                        location.reload();
-	                    });
-	
-	                } else {
-	                    Swal.fire({
-	                        title: '!Información¡',
-	                        text: response.mensajeRespuesta,
-	                        icon: 'info',
-	                        confirmButtonText: 'Aceptar',
-	                        allowOutsideClick: () => false
-	                    })
-	                }
-	
-	            },
-	            error: function() {
-	                Swal.close();
-	                Swal.fire({
-	                    title: '¡Error!',
-	                    text: 'Error de conexión ',
-	                    icon: 'error',
-	                    confirmButtonText: 'Aceptar',
-	                    allowOutsideClick: () => false
-	                })
-	            }
-	        });
-	
-	    });
-	
+	    });	
 	});
+	
 	
 	function limpiarCampos() {
 	    $('.inputInvestigadores').val("");
 	}
-	
 	
 	function editarInvestigador(Investigador) {
 	
@@ -250,6 +173,8 @@
 	    $('#categoria').val(Investigador.categoria);
 	    $('#pertenencia').val(Investigador.pertenencia);
 	    $('#sexo').val(Investigador.sexo);
+	    $('#thumbnail').attr("src", "img/investigador/"+Investigador.foto);
+	    
 	    
 	
 	    modalInvestigador.style.display = "block";
