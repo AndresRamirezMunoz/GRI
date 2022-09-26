@@ -10,7 +10,7 @@
     <div class="modal-contentCruds">
         <span class="closeModalInvestigador"></span>
         <h2 id="idTitleCrearInvestigador"></h2>
-        <form th:action="@{/Investigadores/save}" th:object="${investigador}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/Investigadores/save}" th:object="${investigador}" method="post" enctype="multipart/form-data" id="form">
             <div class="form-group">
                 <label>Id del Investigador: </label> <input type="text" readonly class="form-control inputInvestigadores" name="id" id="id" placeholder="Ingrese el ID del Investigador"> <small id="emailHelp" class="form-text text-muted">El ID del investigador.</small>
             </div>
@@ -31,17 +31,54 @@
             </div>
             <div>
             	<label>Foto: </label>
-    			<input type="file" name="fileImage" id="fileImage" accept="image/png, image/jpeg" onchange="document.getElementById('thumbnail').src = window.URL.createObjectURL(this.files[0])"/>
-    			<small id="emailHelp" class="form-text text-muted">Tamaño maximo de 2MB.</small>
-    			<img class="img-centro" alt="Foto preview" id="thumbnail" width="300">
+    			<input type="file" name="fileImage" id="fileImage" accept="image/png, image/jpeg" onchange="validateSize(this)"/>
+    			<small id="emailHelp" class="form-text text-muted">Tamaño maximo de 5MB.</small>
+    			<img class="img-centro" alt="Foto preview" id="thumbnail" width="150" height="250" onclick="verFoto(this)">
+    			<small class="text-center form-text text-muted">Click para ver más grande.</small>
     			
             </div>
-            <div align="right" class="mt-5">
-                <a href="#" class="closeModalInvestigador">Cancelar</a>
-                <button type="submit" class="btn btn-primary btnModalGuardar">
-                    <i class="fas fa-save"></i> Guardar
-                </button>
-            </div>
         </form>
+        <div align="right" class="mt-5">
+        	<a href="#" class="closeModalInvestigador">Cancelar</a>
+        	<button class="btn btn-primary" onclick="enviar()">
+        		<i class="fas fa-save"></i> Guardar
+        	</button>
+         </div>
     </div>
 </div>
+<script type="text/javascript">
+
+function validateSize(input) {
+	  const fileSize = input.files[0].size / 1024 / 1024; // in MiB
+	  if (fileSize > 5) {
+		  Swal.fire({
+              icon: 'error',
+              title: 'Oops...',
+              text: '¡El archivo es muy pesado! el limite es de 5 MB.'
+          });
+		  input.value=''; 
+	  }else{
+		  document.getElementById('thumbnail').src = window.URL.createObjectURL(input.files[0]);
+	  } 
+	}
+	
+function enviar() {
+	  file = document.getElementById("fileImage");
+	  if(file.value!=''){
+		  Swal.fire(
+                  '¡Correcto!',
+                  'Imagen cargada.',
+                  'success'
+              );
+		  document.getElementById('form').submit();
+	  }
+	}
+	
+function verFoto(file) {
+	Swal.fire({
+		  imageUrl: file.src,
+		  imageHeight: 600,
+		  imageAlt: 'A tall image'
+		})
+	}
+</script>

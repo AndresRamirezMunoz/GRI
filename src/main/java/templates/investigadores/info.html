@@ -68,8 +68,9 @@
                            </div>
                         </div>
                         <div class="col-md-4">
-                        	<img th:if="${inv.foto}" th:src="${'img/investigador/'+inv.foto}" width="300" />
-							<img th:unless="${inv.foto}" th:src="${'img/investigador/default.jpg'}" width="300" />
+                        	<img class="img-centro" th:if="${inv.foto}" th:src="${'img/investigador/'+inv.foto}" width="150" height="250" onclick="verFoto(this)"/>
+                        	<small  th:if="${inv.foto}" class="text-center form-text text-muted">Click para ver más grande.</small>
+							<img class="img-centro" th:unless="${inv.foto}" th:src="${'img/investigador/default.jpg'}" width="150" height="250" />
                         </div>
                      </div>
                   </div>
@@ -110,4 +111,13 @@
       </div>
       <div th:replace="fragments/footer"></div>
    </body>
+  <script type="text/javascript">
+	  function verFoto(file) {
+			Swal.fire({
+				  imageUrl: file.src,
+				  imageHeight: 600,
+				  imageAlt: 'A tall image'
+				})
+			}
+  </script>
 </html>
